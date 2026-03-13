@@ -1,0 +1,10 @@
+{
+  "name": "domovenok-max-mini-app",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "npx serve public",
+    "lint": "echo \"no lint configured\""
+  }
+}
+

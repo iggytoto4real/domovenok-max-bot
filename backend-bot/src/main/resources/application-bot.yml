@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: domovenok-backend-bot
+
+server:
+  port: 8081
+
+domovenok:
+  max:
+    bot:
+      token: YOUR_MAX_BOT_TOKEN_HERE
+      api-base-url: https://platform-api.max.ru
+      core-base-url: http://localhost:8080
+

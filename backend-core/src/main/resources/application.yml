@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: domovenok-backend-core
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/domovenok
+    username: domovenok
+    password: domovenok
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+
+server:
+  port: 8080
+
