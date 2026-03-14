@@ -20,3 +20,5 @@
 - **mini-app** — отдельный фронт (React + Vite), не входит в Maven; запуск: `cd mini-app && npm run dev`
 
 Подробнее — в README каждого модуля. Режимы запуска (local, max-fake, prod) и деплой: [docs/LOCAL_MODE.md](docs/LOCAL_MODE.md), [docs/MAX_FAKE_MODE.md](docs/MAX_FAKE_MODE.md), [docs/PROD_LAUNCH.md](docs/PROD_LAUNCH.md).
+
+История изменений: [CHANGELOG.md](CHANGELOG.md).

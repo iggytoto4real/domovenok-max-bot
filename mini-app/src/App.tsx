@@ -40,18 +40,21 @@ const App: React.FC = () => {
         const maxUser = getInitDataUnsafeUser();
         if (maxUser) {
           dispatch(setUserFromMaxUnsafe(maxUser));
-        } else {
-          dispatch(initWithFakeData());
+          return true;
         }
+        return false;
       }
-      trySetMaxUser();
-      const t = window.setTimeout(() => {
-        const maxUser = getInitDataUnsafeUser();
-        if (maxUser) dispatch(setUserFromMaxUnsafe(maxUser));
-      }, 200);
+      if (!trySetMaxUser()) dispatch(initWithFakeData());
+      const delays = [150, 400, 800];
+      const timers = delays.map((ms) =>
+        window.setTimeout(() => {
+          const maxUser = getInitDataUnsafeUser();
+          if (maxUser) dispatch(setUserFromMaxUnsafe(maxUser));
+        }, ms)
+      );
       dispatch(loadFakePets());
       ready();
-      return () => window.clearTimeout(t);
+      return () => timers.forEach((t) => window.clearTimeout(t));
     } else {
       dispatch(initWithFakeData());
       dispatch(loadFakePets());

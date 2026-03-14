@@ -32,13 +32,25 @@ export const initWithFakeData = createAsyncThunk('user/initWithFakeData', async 
     lastName: 'Пользователь',
     username: 'test_user',
     photoUrl: undefined as string | undefined,
+    denyuzhki: 150,
+    sokrovishcha: 3,
   };
 });
 
-// Режим max-fake: пользователь из MAX (initDataUnsafe), без бэкенда
+// Режим max-fake: пользователь из MAX (initDataUnsafe), без бэкенда; ресурсы — фейковые
 export const setUserFromMaxUnsafe = createAsyncThunk(
   'user/setUserFromMaxUnsafe',
-  async (payload: { id: number; firstName: string; lastName: string; username?: string; photoUrl?: string }) => payload
+  async (
+    payload: {
+      id: number;
+      firstName: string;
+      lastName: string;
+      username?: string;
+      photoUrl?: string;
+      denyuzhki?: number;
+      sokrovishcha?: number;
+    }
+  ) => payload
 );
 
 const initialState: UserState = {
@@ -54,10 +66,20 @@ const initialState: UserState = {
   error: undefined,
 };
 
+const EXCHANGE_RATE = 100; // 1 сокровище = 100 денюжек
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    /** Обмен сокровищ на денюжки. amount — сколько сокровищ отдаём. */
+    exchangeSokrovishchaForDenyuzhki(state, action: { payload: number }) {
+      const amount = Math.max(0, Math.floor(action.payload));
+      if (amount > state.sokrovishcha) return;
+      state.sokrovishcha -= amount;
+      state.denyuzhki += amount * EXCHANGE_RATE;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(authInitThunk.pending, (state) => {
@@ -88,6 +110,8 @@ const userSlice = createSlice({
         state.lastName = action.payload.lastName;
         state.username = action.payload.username;
         state.photoUrl = action.payload.photoUrl;
+        state.denyuzhki = action.payload.denyuzhki ?? 0;
+        state.sokrovishcha = action.payload.sokrovishcha ?? 0;
       })
       .addCase(initWithFakeData.rejected, (state, action) => {
         state.status = 'failed';
@@ -104,10 +128,13 @@ const userSlice = createSlice({
         state.lastName = action.payload.lastName;
         state.username = action.payload.username;
         state.photoUrl = action.payload.photoUrl;
+        state.denyuzhki = action.payload.denyuzhki ?? 100;
+        state.sokrovishcha = action.payload.sokrovishcha ?? 2;
         state.token = null;
       });
   },
 });
 
+export const { exchangeSokrovishchaForDenyuzhki } = userSlice.actions;
 export default userSlice.reducer;
 
