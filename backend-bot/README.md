@@ -14,9 +14,10 @@ backend-bot/
   pom.xml
   src/main/java/com/its/domovenok/bot/
     DomovenokBotApplication.java
-    config/BotProperties.java       # Токен и URL Bot API
-    client/MaxBotClient.java        # getUpdates, sendMessage
-    service/BotUpdateHandler.java   # Обработка /start и др.
+    config/BotProperties.java       # Токен и URL Bot API (Lombok @Getter/@Setter)
+    client/MaxBotClient.java        # getUpdates, sendMessage (Authorization без Bearer)
+    dto/                            # DTO для ответов Bot API (Lombok)
+    service/BotUpdateHandler.java   # Обработка /start, приветствие + ссылка на канал
     service/BotPollingService.java # Long polling в фоне
   src/main/resources/application.yml
 ```

@@ -5,8 +5,8 @@ import com.its.domovenok.bot.config.BotProperties;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,9 +14,10 @@ import org.springframework.stereotype.Service;
  * Работает с локали — исходящие запросы к platform-api.max.ru, входящий URL не нужен.
  */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class BotPollingService {
 
-    private static final Logger log = LoggerFactory.getLogger(BotPollingService.class);
     private static final int POLL_TIMEOUT_SECONDS = 30;
     private static final int MAX_UPDATES_PER_REQUEST = 100;
 
@@ -25,12 +26,6 @@ public class BotPollingService {
     private final BotUpdateHandler updateHandler;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private volatile Thread pollingThread;
-
-    public BotPollingService(BotProperties props, MaxBotClient botClient, BotUpdateHandler updateHandler) {
-        this.props = props;
-        this.botClient = botClient;
-        this.updateHandler = updateHandler;
-    }
 
     @PostConstruct
     public void start() {

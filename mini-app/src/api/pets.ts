@@ -3,6 +3,10 @@ import { apiFetch } from './client';
 export interface PetDto {
   id: number;
   name: string;
+  imageUrl?: string | null;
+  hunger?: number;
+  energy?: number;
+  happiness?: number;
 }
 
 export interface GetPetsResponse {

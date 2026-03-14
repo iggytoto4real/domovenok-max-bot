@@ -22,12 +22,15 @@ export function getInitDataUnsafeUser(): {
   const unsafe = (window as any).WebApp?.initDataUnsafe;
   const user = unsafe?.user;
   if (!user || typeof user.id === 'undefined') return null;
+  const first = user.first_name ?? user.firstName ?? '';
+  const last = user.last_name ?? user.lastName ?? '';
+  const photo = user.photo_url ?? user.photoUrl;
   return {
     id: Number(user.id),
-    firstName: String(user.first_name ?? ''),
-    lastName: String(user.last_name ?? ''),
+    firstName: String(first),
+    lastName: String(last),
     username: user.username != null ? String(user.username) : undefined,
-    photoUrl: user.photo_url != null ? String(user.photo_url) : undefined,
+    photoUrl: photo != null && photo !== '' ? String(photo) : undefined,
   };
 }
 
@@ -49,6 +52,15 @@ export function ready(): void {
   const webApp = (window as any).WebApp;
   if (typeof webApp.ready === 'function') {
     webApp.ready();
+  }
+}
+
+/** Закрывает мини-приложение в MAX (если доступно). В браузере не делает ничего. */
+export function closeMiniApp(): void {
+  if (!isMaxEnvironment()) return;
+  const webApp = (window as any).WebApp;
+  if (typeof webApp.close === 'function') {
+    webApp.close();
   }
 }
 

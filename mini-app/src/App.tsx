@@ -36,14 +36,22 @@ const App: React.FC = () => {
           // Ошибка будет отображена через user.status / error
         });
     } else if (mode === 'max-fake') {
-      const maxUser = getInitDataUnsafeUser();
-      if (maxUser) {
-        dispatch(setUserFromMaxUnsafe(maxUser));
-      } else {
-        dispatch(initWithFakeData());
+      function trySetMaxUser() {
+        const maxUser = getInitDataUnsafeUser();
+        if (maxUser) {
+          dispatch(setUserFromMaxUnsafe(maxUser));
+        } else {
+          dispatch(initWithFakeData());
+        }
       }
+      trySetMaxUser();
+      const t = window.setTimeout(() => {
+        const maxUser = getInitDataUnsafeUser();
+        if (maxUser) dispatch(setUserFromMaxUnsafe(maxUser));
+      }, 200);
       dispatch(loadFakePets());
       ready();
+      return () => window.clearTimeout(t);
     } else {
       dispatch(initWithFakeData());
       dispatch(loadFakePets());
@@ -65,6 +73,9 @@ const App: React.FC = () => {
       <Header
         firstName={user.firstName}
         lastName={user.lastName}
+        photoUrl={user.photoUrl}
+        denyuzhki={user.denyuzhki}
+        sokrovishcha={user.sokrovishcha}
         mode={mode}
       />
 

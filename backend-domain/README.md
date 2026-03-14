@@ -11,10 +11,10 @@
 
 ```
 backend-domain/
-  pom.xml                    # Maven: jar, lombok, jakarta.validation
+  pom.xml                    # Maven: jar, Lombok, jakarta.validation
   src/main/java/
     com/its/domovenok/domain/
-      model/                 # Доменные сущности
+      model/                 # Доменные сущности (Lombok @Data)
         Pet.java             # Питомец: userId, name, hunger, energy, happiness, lastUpdatedAt
         PetState.java        # Enum состояний (HAPPY, HUNGRY, SAD, SLEEPY)
         UserProfile.java     # Профиль пользователя MAX (id, firstName, lastName, username, photoUrl и т.д.)

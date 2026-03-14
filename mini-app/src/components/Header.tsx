@@ -1,8 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { closeMiniApp } from '../bridge/maxBridge';
 
 interface HeaderProps {
   firstName: string;
   lastName: string;
+  photoUrl?: string | null;
+  /** Ресурсы: Денюжки, Сокровища */
+  denyuzhki: number;
+  sokrovishcha: number;
   mode: 'prod' | 'local' | 'max-fake';
 }
 
@@ -23,7 +28,24 @@ const UserIcon: React.FC<{ size?: number }> = ({ size = 24 }) => (
   </svg>
 );
 
-const Header: React.FC<HeaderProps> = ({ firstName, lastName, mode }) => {
+/** Иконка монеток (Денюжки) */
+const DenyuzhkiIcon: React.FC<{ size?: number }> = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v12M9 9h6M9 15h6" />
+  </svg>
+);
+
+/** Иконка сундука (Сокровища) */
+const SokrovishchaIcon: React.FC<{ size?: number }> = ({ size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <path d="M4 12v8h16v-8" />
+    <path d="M2 12h20M12 2v10M8 12l4-10 4 10" />
+    <path d="M8 12h8" />
+  </svg>
+);
+
+const Header: React.FC<HeaderProps> = ({ firstName, lastName, photoUrl, denyuzhki, sokrovishcha, mode }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -59,13 +81,23 @@ const Header: React.FC<HeaderProps> = ({ firstName, lastName, mode }) => {
       }}
     >
       <div style={{ minWidth: 0 }}>
-        <h1 style={{ margin: 0, fontSize: 20 }}>Домовёнок</h1>
-        <p style={{ margin: '4px 0 0', fontSize: 14, color: '#555' }}>
+        <p style={{ margin: 0, fontSize: 18, fontWeight: 600, color: '#111' }}>
           {displayName}
         </p>
       </div>
 
-      <div ref={dropdownRef} style={{ position: 'relative', flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div title="Денюжки" style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#8B6914', fontSize: 14, fontWeight: 600 }}>
+            <DenyuzhkiIcon size={20} />
+            <span>{denyuzhki}</span>
+          </div>
+          <div title="Сокровища" style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#2E7D32', fontSize: 14, fontWeight: 600 }}>
+            <SokrovishchaIcon size={20} />
+            <span>{sokrovishcha}</span>
+          </div>
+        </div>
+        <div ref={dropdownRef} style={{ position: 'relative' }}>
         <button
           type="button"
           onClick={() => setDropdownOpen((v) => !v)}
@@ -81,12 +113,23 @@ const Header: React.FC<HeaderProps> = ({ firstName, lastName, mode }) => {
             padding: 0,
             border: 'none',
             borderRadius: '50%',
-            backgroundColor: 'rgba(0,0,0,0.06)',
+            backgroundColor: photoUrl ? 'transparent' : 'rgba(0,0,0,0.06)',
             color: '#333',
             cursor: 'pointer',
+            overflow: 'hidden',
           }}
         >
-          <UserIcon size={22} />
+          {photoUrl ? (
+            <img
+              src={photoUrl}
+              alt=""
+              width={40}
+              height={40}
+              style={{ objectFit: 'cover', display: 'block' }}
+            />
+          ) : (
+            <UserIcon size={22} />
+          )}
         </button>
 
         {dropdownOpen && (
@@ -146,12 +189,20 @@ const Header: React.FC<HeaderProps> = ({ firstName, lastName, mode }) => {
                 textAlign: 'left',
                 cursor: 'pointer',
               }}
-              onClick={() => setDropdownOpen(false)}
+              onClick={() => {
+                setDropdownOpen(false);
+                const message =
+                  'Домовята будут скучать без тебя! Без твоей заботы им будет грустно. Точно хочешь выйти?';
+                if (window.confirm(message)) {
+                  closeMiniApp();
+                }
+              }}
             >
               Выход
             </button>
           </div>
         )}
+        </div>
       </div>
     </header>
   );

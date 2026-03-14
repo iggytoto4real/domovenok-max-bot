@@ -4,10 +4,12 @@ import com.its.domovenok.core.util.InitDataValidator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final InitDataValidator initDataValidator;
@@ -15,11 +17,6 @@ public class AuthService {
 
     @Value("${max.bot.token:}")
     private String botToken;
-
-    public AuthService(InitDataValidator initDataValidator, SessionStore sessionStore) {
-        this.initDataValidator = initDataValidator;
-        this.sessionStore = sessionStore;
-    }
 
     public Optional<Map<String, Object>> init(String initData) {
         Optional<Map<String, Object>> userOpt = initDataValidator.parseAndValidate(initData, botToken);

@@ -48,6 +48,8 @@ const initialState: UserState = {
   username: undefined,
   photoUrl: undefined,
   token: null,
+  denyuzhki: 0,
+  sokrovishcha: 0,
   status: 'idle',
   error: undefined,
 };

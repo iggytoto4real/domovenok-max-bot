@@ -17,6 +17,6 @@
 | `pom.xml` | Корневой Maven-проект (multi-module), Java 17, Spring Boot 3.x |
 
 - **Maven-модули** собираются из корня: `mvn clean install`
-- **mini-app** — отдельный Node-проект, не входит в Maven; запуск: `cd mini-app && npm start`
+- **mini-app** — отдельный фронт (React + Vite), не входит в Maven; запуск: `cd mini-app && npm run dev`
 
-Подробнее — в README каждого модуля.
+Подробнее — в README каждого модуля. Режимы запуска (local, max-fake, prod) и деплой: [docs/LOCAL_MODE.md](docs/LOCAL_MODE.md), [docs/MAX_FAKE_MODE.md](docs/MAX_FAKE_MODE.md), [docs/PROD_LAUNCH.md](docs/PROD_LAUNCH.md).

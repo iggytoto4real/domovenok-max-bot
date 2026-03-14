@@ -1,24 +1,38 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { PetsState } from './types';
+import type { PetItem, PetsState } from './types';
 import type { RootState } from '../../app/store';
 import { getPets as apiGetPets } from '../../api/pets';
+import type { PetDto } from '../../api/pets';
+
+function toPetItem(pet: PetDto): PetItem {
+  return {
+    id: pet.id,
+    name: pet.name,
+    imageUrl: pet.imageUrl ?? undefined,
+    hunger: typeof pet.hunger === 'number' ? pet.hunger : 50,
+    energy: typeof pet.energy === 'number' ? pet.energy : 50,
+    happiness: typeof pet.happiness === 'number' ? pet.happiness : 50,
+  };
+}
 
 export const fetchPetsThunk = createAsyncThunk(
   'pets/fetchPets',
-  async (_, { getState }): Promise<{ id: number; name: string }[]> => {
-    const token = (getState() as RootState).user.token;
+  async (_, { getState }): Promise<PetItem[]> => {
+    const rootState = getState() as RootState;
+    const token = (rootState.user as { token: string | null }).token;
     if (!token) {
       return [];
     }
-    return apiGetPets(token);
+    const pets = await apiGetPets(token);
+    return pets.map((p) => toPetItem(p));
   }
 );
 
 // Локальный режим: фейковые питомцы
-export const loadFakePets = createAsyncThunk('pets/loadFakePets', async () => {
+export const loadFakePets = createAsyncThunk('pets/loadFakePets', async (): Promise<PetItem[]> => {
   return [
-    { id: 1, name: 'Домовёнок Кузя' },
-    { id: 2, name: 'Домовёнок Фома' },
+    { id: 1, name: 'Домовёнок Кузя', imageUrl: null, hunger: 30, energy: 80, happiness: 70 },
+    { id: 2, name: 'Домовёнок Фома', imageUrl: null, hunger: 70, energy: 40, happiness: 50 },
   ];
 });
 
