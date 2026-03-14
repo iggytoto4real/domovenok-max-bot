@@ -1,0 +1,111 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import type { UserState } from './types';
+import { getInitData } from '../../bridge/maxBridge';
+import { authInit as apiAuthInit } from '../../api/auth';
+
+export const authInitThunk = createAsyncThunk(
+  'user/authInit',
+  async (): Promise<{ user: { id: number; firstName: string; lastName: string; username?: string; photoUrl?: string }; token: string }> => {
+    const initData = getInitData();
+    if (!initData) {
+      throw new Error('initData is not available');
+    }
+    const { user, token } = await apiAuthInit(initData);
+    return {
+      user: {
+        id: user.id,
+        firstName: user.firstName ?? '',
+        lastName: user.lastName ?? '',
+        username: user.username ?? undefined,
+        photoUrl: user.photoUrl ?? undefined,
+      },
+      token,
+    };
+  }
+);
+
+// Локальный режим разработки: фейковые данные пользователя
+export const initWithFakeData = createAsyncThunk('user/initWithFakeData', async () => {
+  return {
+    id: 999,
+    firstName: 'Тестовый',
+    lastName: 'Пользователь',
+    username: 'test_user',
+    photoUrl: undefined as string | undefined,
+  };
+});
+
+// Режим max-fake: пользователь из MAX (initDataUnsafe), без бэкенда
+export const setUserFromMaxUnsafe = createAsyncThunk(
+  'user/setUserFromMaxUnsafe',
+  async (payload: { id: number; firstName: string; lastName: string; username?: string; photoUrl?: string }) => payload
+);
+
+const initialState: UserState = {
+  id: null,
+  firstName: '',
+  lastName: '',
+  username: undefined,
+  photoUrl: undefined,
+  token: null,
+  status: 'idle',
+  error: undefined,
+};
+
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(authInitThunk.pending, (state) => {
+        state.status = 'loading';
+        state.error = undefined;
+      })
+      .addCase(authInitThunk.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.id = action.payload.user.id;
+        state.firstName = action.payload.user.firstName;
+        state.lastName = action.payload.user.lastName;
+        state.username = action.payload.user.username;
+        state.photoUrl = action.payload.user.photoUrl;
+        state.token = action.payload.token;
+      })
+      .addCase(authInitThunk.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(initWithFakeData.pending, (state) => {
+        state.status = 'loading';
+        state.error = undefined;
+      })
+      .addCase(initWithFakeData.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.id = action.payload.id;
+        state.firstName = action.payload.firstName;
+        state.lastName = action.payload.lastName;
+        state.username = action.payload.username;
+        state.photoUrl = action.payload.photoUrl;
+      })
+      .addCase(initWithFakeData.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(setUserFromMaxUnsafe.pending, (state) => {
+        state.status = 'loading';
+        state.error = undefined;
+      })
+      .addCase(setUserFromMaxUnsafe.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.id = action.payload.id;
+        state.firstName = action.payload.firstName;
+        state.lastName = action.payload.lastName;
+        state.username = action.payload.username;
+        state.photoUrl = action.payload.photoUrl;
+        state.token = null;
+      });
+  },
+});
+
+export default userSlice.reducer;
+

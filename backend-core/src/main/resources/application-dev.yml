@@ -1,0 +1,14 @@
+# Профиль для быстрой проверки без PostgreSQL (mvn -pl backend-core spring-boot:run -Dspring-boot.run.profiles=dev)
+spring:
+  datasource:
+    url: jdbc:h2:mem:domovenok
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect

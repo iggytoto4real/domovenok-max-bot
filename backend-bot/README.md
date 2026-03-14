@@ -11,28 +11,30 @@
 
 ```
 backend-bot/
-  pom.xml                    # Spring Boot, Web, backend-domain
-  src/main/java/
-    com/its/domovenok/bot/
-      DomovenokBotApplication.java   # Точка входа Spring Boot
-  src/main/resources/
-    application-bot.yml      # Порт 8081, токен бота, URL Bot API и backend-core
+  pom.xml
+  src/main/java/com/its/domovenok/bot/
+    DomovenokBotApplication.java
+    config/BotProperties.java       # Токен и URL Bot API
+    client/MaxBotClient.java        # getUpdates, sendMessage
+    service/BotUpdateHandler.java   # Обработка /start и др.
+    service/BotPollingService.java # Long polling в фоне
+  src/main/resources/application.yml
 ```
 
-По плану архитектуры далее добавляются:
+## Запуск с локали (long polling)
 
-- `config/` — настройки токена, URL Bot API, режим webhook/polling, URL backend-core
-- `client/` — `MaxBotClient`: sendMessage, getUpdates и другие вызовы Bot API
-- `webhook/` — контроллер для приёма webhook от MAX (POST /bot/webhook)
-- `polling/` — сервис long polling (getUpdates по расписанию)
-- `service/` — `BotUpdateHandler` (обработка команд), `ReminderService` (напоминания по расписанию)
-
-## Запуск
+Бот может работать с твоей машины без деплоя: long polling сам опрашивает MAX, входящий URL не нужен.
 
 Из корня репозитория:
 
 ```bash
+set MAX_BOT_TOKEN=твой_токен_из_панели_MAX
 mvn -pl backend-bot spring-boot:run
 ```
 
-В `application-bot.yml` нужно задать реальный токен бота и при необходимости URL backend-core.
+Токен: Платформа MAX для партнёров → Чат-боты → твой бот → Интеграция → Получить токен.
+
+После запуска при отправке боту команды `/start` в чате он ответит:
+
+- «Привет! Нажми кнопку «Играть», чтобы открыть своих домовят.
+- Канал с новостями разработки: https://max.ru/id246009594706_biz»

@@ -1,33 +1,41 @@
 # backend-core
 
-REST API для web mini-app и вся бизнес-логика игры Tamagotchi: состояние питомцев, валидация пользователей по `initData` MAX, хранение в БД.
+REST API для web mini-app и бизнес-логика игры Домовёнок: авторизация пользователя по `initData` MAX, работа с питомцами и подготовка к хранению состояния в БД.
 
 ## Зачем нужен
 
-- Обслуживает запросы мини-приложения: авторизация по `initData`, получение/обновление состояния питомца.
-- Хранит данные в PostgreSQL (JPA).
-- Единственный модуль, который напрямую работает с БД игры.
+- Обслуживает запросы мини-приложения: авторизация по `initData`, получение списка питомцев и дальнейшие операции с ними.
+- Отделяет web-слой (контроллеры) от доменной логики (сервисы).
+- Является точкой входа для будущей интеграции с PostgreSQL (через JPA).
 
-## Что где лежит
+## Что где лежит сейчас
 
 ```
 backend-core/
-  pom.xml                    # Spring Boot, Web, Data JPA, backend-domain, PostgreSQL
-  src/main/java/
-    com/its/domovenok/core/
-      DomovenokCoreApplication.java   # Точка входа Spring Boot
+  pom.xml                       # Spring Boot, Web, backend-domain, PostgreSQL + H2 (runtime)
+  src/main/java/com/its/domovenok/core/
+    DomovenokCoreApplication.java   # Точка входа Spring Boot
+    api/
+      AuthController.java       # POST /api/auth/init — валидация initData, выдача сессии/токена
+      PetController.java        # GET /api/pets — список питомцев по токену
+    service/
+      AuthService.java          # Логика аутентификации по initData
+      PetService.java           # Заглушка логики работы с питомцами
+      SessionStore.java         # Простейшее in-memory хранилище сессий
+    config/
+      WebConfig.java            # CORS для mini-app (origins из app.cors.allowed-origins)
+    util/
+      InitDataValidator.java    # Валидация initData из MAX по токену бота
+
   src/main/resources/
-    application.yml          # Порт 8080, datasource, JPA
+    application.yml             # Порт 8080, datasource PostgreSQL, MAX_BOT_TOKEN, CORS
+    application-dev.yml         # Профиль dev: H2 в памяти и упрощённые настройки
 ```
 
-По плану архитектуры далее добавляются:
+## Дальнейшее развитие
 
-- `config/` — конфигурация Spring (CORS, security и т.д.)
-- `api/` — контроллеры: `AuthController` (POST /api/auth/init), `PetController` (GET/PATCH /api/pet)
-- `service/` — `PetService`, `AuthService`, логика деградации состояний
-- `persistence/` — JPA-сущности (`PetEntity`), репозитории
-- `util/` — валидация `initData`, мапперы entity ↔ доменная модель
-- `db/migration/` — миграции Flyway/Liquibase
+- `persistence/` — JPA-сущности (`PetEntity`), репозитории и миграции (Flyway/Liquibase).
+- Расширение `PetService` для работы с БД и логики изменения состояний питомцев.
 
 ## Запуск
 
@@ -43,4 +51,14 @@ mvn -pl backend-core spring-boot:run
 cd backend-core && mvn spring-boot:run
 ```
 
-Нужна доступная БД PostgreSQL с параметрами из `application.yml` (по умолчанию localhost:5432, БД `domovenok`).
+По умолчанию используется PostgreSQL с параметрами из `application.yml` (localhost:5432, БД `domovenok`).  
+Для локальной разработки без БД можно использовать профиль `dev` с H2:
+
+```bash
+mvn -pl backend-core spring-boot:run "-Dspring-boot.run.profiles=dev"
+```
+
+Переменные окружения:
+
+- `MAX_BOT_TOKEN` — токен бота MAX; используется для проверки подписи `initData`.
+- `CORS_ALLOWED_ORIGINS` — список origin-ов (через запятую), с которых мини-приложение может ходить на API.
