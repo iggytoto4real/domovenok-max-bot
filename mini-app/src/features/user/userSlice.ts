@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { UserState } from './types';
 import { getInitData } from '../../bridge/maxBridge';
 import { authInit as apiAuthInit } from '../../api/auth';
+import { EXCHANGE_RATE } from './constants';
 
 export const authInitThunk = createAsyncThunk(
   'user/authInit',
@@ -65,8 +66,6 @@ const initialState: UserState = {
   status: 'idle',
   error: undefined,
 };
-
-const EXCHANGE_RATE = 100; // 1 сокровище = 100 денюжек
 
 const userSlice = createSlice({
   name: 'user',

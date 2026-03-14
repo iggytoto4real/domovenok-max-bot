@@ -23,3 +23,14 @@
   - Добавлен `onClick` с TODO (открыть экран покупки сокровищ), выравнивание текста кнопки по центру.
 
 Файл: `mini-app/src/components/Header.tsx`.
+
+#### Рефакторинг Header (тесты и разбиение на компоненты)
+
+- **Тесты:** добавлены Vitest, @testing-library/react, jsdom; хелпер `renderWithStore` в `src/test/test-utils.tsx`. Тесты `Header/Header.test.tsx` проверяют появление шапки, меню пользователя (Настройки, Выход), модалок «Денюжки», «Обмен сокровищ на денюжки», «Сокровища» и кнопок (Обменять/Купить сокровища в зависимости от количества сокровищ).
+- **Структура:** компонент Header перенесён в папку `mini-app/src/components/Header/`: `Header.tsx`, `index.ts`, `Header.test.tsx`, `icons.tsx`, `Modal.tsx`, `UserDropdown.tsx`, `DenyuzhkiModal.tsx`, `ExchangeModal.tsx`, `SokrovishchaModal.tsx`. Импорт в App без изменений: `import Header from './components/Header'`.
+- **Константа:** `EXCHANGE_RATE` вынесена в `mini-app/src/features/user/constants.ts`, используется в `userSlice` и `ExchangeModal`.
+- **Скрипты:** в `package.json` добавлены `"test": "vitest"` и `"test:run": "vitest run"`.
+
+#### Упрощение модалки «Денюжки»
+
+- В модалке «Денюжки» временно убрана кнопка **«Заработать денюжки»** — остались варианты обменять сокровища на денюжки или купить сокровища, плюс кнопка «Закрыть». UI и тексты остальных кнопок сохранены.
