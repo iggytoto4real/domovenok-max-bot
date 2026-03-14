@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <name>domovenok-max-bot</name>
-    <description>MAX mini-app Tamagotchi bot - Maven multi-module project</description>
+    <description>MAX mini-app Домовёнок bot - Maven multi-module project</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
