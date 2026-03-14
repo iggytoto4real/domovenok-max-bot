@@ -6,6 +6,7 @@ on:
     paths:
       - "mini-app/**"
       - ".github/workflows/deploy-mini-app-fake.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
