@@ -13,23 +13,32 @@ import java.util.Optional;
 import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class InitDataValidator {
 
+    private static final Logger log = LoggerFactory.getLogger(InitDataValidator.class);
     private static final String WEB_APP_DATA = "WebAppData";
     private static final String HMAC_SHA256 = "HmacSHA256";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Валидация по документации MAX: https://dev.max.ru/docs/webapps/validation
+     * data_check_string — пары key=value (без hash), отсортированные по key, разделитель \n, значения URL-декодированы.
+     */
     public Optional<Map<String, Object>> parseAndValidate(String initData, String botToken) {
         if (initData == null || initData.isBlank() || botToken == null || botToken.isBlank()) {
+            log.debug("InitData validation failed: initData or botToken is blank");
             return Optional.empty();
         }
         Map<String, String> params = parseUrlEncoded(initData);
         String hash = params.remove("hash");
         if (hash == null || hash.isBlank()) {
+            log.debug("InitData validation failed: hash is missing");
             return Optional.empty();
         }
         String dataCheckString = buildDataCheckString(params);
@@ -37,19 +46,21 @@ public class InitDataValidator {
             byte[] secretKey = hmacSha256(WEB_APP_DATA.getBytes(StandardCharsets.UTF_8), botToken.getBytes(StandardCharsets.UTF_8));
             String computedHash = bytesToHex(hmacSha256(secretKey, dataCheckString.getBytes(StandardCharsets.UTF_8)));
             if (!computedHash.equalsIgnoreCase(hash)) {
+                log.debug("InitData validation failed: hash mismatch (check MAX_BOT_TOKEN is the token of the bot that opened the mini-app)");
                 return Optional.empty();
             }
         } catch (Exception e) {
+            log.debug("InitData validation failed: HMAC error", e);
             return Optional.empty();
         }
         String userJson = params.get("user");
         if (userJson == null || userJson.isBlank()) {
+            log.debug("InitData validation failed: user is missing");
             return Optional.empty();
         }
         try {
             @SuppressWarnings("unchecked")
             Map<String, Object> user = objectMapper.readValue(userJson, Map.class);
-            // Нормализуем ключи под camelCase для фронта
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("id", user.get("id"));
             result.put("firstName", user.get("first_name"));
@@ -59,6 +70,7 @@ public class InitDataValidator {
             result.put("languageCode", user.get("language_code"));
             return Optional.of(result);
         } catch (Exception e) {
+            log.debug("InitData validation failed: user JSON parse error", e);
             return Optional.empty();
         }
     }
