@@ -4,10 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.its.domovenok.core.config.BalanceConstants;
 import com.its.domovenok.core.dto.CreatePetRequestDto;
 import com.its.domovenok.core.dto.PetDto;
 import com.its.domovenok.core.persistence.PetEntity;
 import com.its.domovenok.core.persistence.PetRepository;
+import com.its.domovenok.core.persistence.UserAccountEntity;
+import com.its.domovenok.core.persistence.UserAccountRepository;
 import com.its.domovenok.domain.model.DomovoyType;
 import com.its.domovenok.domain.model.Pet;
 import java.time.Instant;
@@ -28,11 +31,14 @@ class PetServiceTest {
     @Mock
     private PetRepository petRepository;
 
+    @Mock
+    private UserAccountRepository userAccountRepository;
+
     private PetService petService;
 
     @BeforeEach
     void setUp() {
-        petService = new PetService(sessionStore, petRepository);
+        petService = new PetService(sessionStore, petRepository, userAccountRepository);
     }
 
     @Test
@@ -65,6 +71,7 @@ class PetServiceTest {
     @Test
     void createPet_returnsEmpty_whenTypeUnknown() {
         CreatePetRequestDto request = CreatePetRequestDto.of("Кузя", "unknown_type");
+        when(userAccountRepository.findById(100L)).thenReturn(Optional.of(new UserAccountEntity(100L, 1000, 1)));
         Optional<Pet> result = petService.createPet(100L, request);
 
         assertThat(result).isEmpty();
@@ -73,6 +80,8 @@ class PetServiceTest {
     @Test
     void createPet_createsPetWithCorrectNameAndType() {
         CreatePetRequestDto request = CreatePetRequestDto.of("Домовёнок Фома", "dvorovoy");
+        when(userAccountRepository.findById(100L)).thenReturn(
+                Optional.of(new UserAccountEntity(100L, BalanceConstants.PET_PRICE_DENYUZHKI + 100, 0)));
         when(petRepository.save(any(PetEntity.class))).thenAnswer(inv -> {
             PetEntity e = inv.getArgument(0);
             e.setId(42L);
@@ -95,6 +104,8 @@ class PetServiceTest {
     @Test
     void createPet_usesDefaultName_whenNameEmpty() {
         CreatePetRequestDto request = CreatePetRequestDto.of("  ", "bannik");
+        when(userAccountRepository.findById(200L)).thenReturn(
+                Optional.of(new UserAccountEntity(200L, BalanceConstants.PET_PRICE_DENYUZHKI + 50, 0)));
         when(petRepository.save(any(PetEntity.class))).thenAnswer(inv -> {
             PetEntity e = inv.getArgument(0);
             e.setId(1L);

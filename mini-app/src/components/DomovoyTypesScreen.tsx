@@ -6,6 +6,10 @@ export interface DomovoyTypesScreenProps {
   onSelect: (typeId: DomovoyTypeId) => void;
   onCancel: () => void;
   onConfirm: () => void;
+  /** Цена покупки домовёнка в денюжках. */
+  priceDenyuzhki: number;
+  /** Хватает ли текущему пользователю денюжек на покупку. */
+  canAfford: boolean;
 }
 
 interface DomovoyTypeConfig {
@@ -78,6 +82,8 @@ const DomovoyTypesScreen: React.FC<DomovoyTypesScreenProps> = ({
   onSelect,
   onCancel,
   onConfirm,
+  priceDenyuzhki,
+  canAfford,
 }) => {
   const hasSelection = !!selectedType;
 
@@ -151,12 +157,23 @@ const DomovoyTypesScreen: React.FC<DomovoyTypesScreenProps> = ({
         style={{
           fontSize: 13,
           color: '#555',
-          margin: '0 0 12px',
+          margin: '0 0 4px',
           textAlign: 'center',
         }}
       >
-        Каждый домовой отвечает за свою часть хозяйства. Выбери того, кто лучше всего подойдёт твоему дому — пока это
-        влияет только на образ, без изменения характеристик.
+        Каждый домовой отвечает за свою часть хозяйства. Выбери того, кто лучше всего подойдёт твоему дому.
+      </p>
+      <p
+        style={{
+          fontSize: 12,
+          color: canAfford ? '#555' : '#b00020',
+          margin: '0 0 12px',
+          textAlign: 'center',
+          fontWeight: 500,
+        }}
+      >
+        Цена: {priceDenyuzhki.toLocaleString('ru-RU')} денюжек
+        {!canAfford ? ' · Не хватает денюжек для покупки' : ''}
       </p>
 
       <div
@@ -195,7 +212,7 @@ const DomovoyTypesScreen: React.FC<DomovoyTypesScreenProps> = ({
         <button
           type="button"
           onClick={onConfirm}
-          disabled={!hasSelection}
+          disabled={!hasSelection || !canAfford}
           style={{
             flex: 1,
             padding: '10px 12px',

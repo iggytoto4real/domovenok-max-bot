@@ -13,6 +13,9 @@ import NamePetModal from './components/NamePetModal';
 type Mode = 'prod' | 'dev';
 type ViewMode = 'list' | 'buy';
 
+// Должно быть синхронизировано с BalanceConstants.PET_PRICE_DENYUZHKI на бэкенде.
+const PET_PRICE_DENYUZHKI = 300;
+
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
@@ -62,6 +65,10 @@ const App: React.FC = () => {
 
   const handleConfirmBuy = () => {
     if (selectedDomovoyType) {
+      if (user.denyuzhki < PET_PRICE_DENYUZHKI) {
+        // В проде дополнительно защита на бэкенде, здесь только UX-блокировка.
+        return;
+      }
       setNewPetName('');
       setNameModalOpen(true);
       return;
@@ -123,6 +130,8 @@ const App: React.FC = () => {
             onSelect={handleDomovoySelect}
             onCancel={handleCancelBuy}
             onConfirm={handleConfirmBuy}
+            priceDenyuzhki={PET_PRICE_DENYUZHKI}
+            canAfford={user.denyuzhki >= PET_PRICE_DENYUZHKI}
           />
         )}
 

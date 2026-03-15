@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.its.domovenok.core.dto.CreatePetRequestDto;
 import com.its.domovenok.core.dto.PetDto;
+import com.its.domovenok.core.service.InsufficientFundsException;
 import com.its.domovenok.core.service.PetService;
 import com.its.domovenok.domain.model.DomovoyType;
 import com.its.domovenok.domain.model.Pet;
@@ -110,5 +111,20 @@ class PetControllerTest {
                 .andExpect(jsonPath("$.hunger").value(50))
                 .andExpect(jsonPath("$.energy").value(70))
                 .andExpect(jsonPath("$.happiness").value(70));
+    }
+
+    @Test
+    void createPet_returns400_whenInsufficientFunds() throws Exception {
+        when(petService.getUserIdByToken(VALID_TOKEN)).thenReturn(100L);
+        when(petService.createPet(eq(100L), any(CreatePetRequestDto.class)))
+                .thenThrow(new InsufficientFundsException("Not enough"));
+
+        String body = objectMapper.writeValueAsString(CreatePetRequestDto.of("Кузя", "domovoy"));
+        mockMvc.perform(post("/api/pets")
+                        .header("Authorization", BEARER)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("insufficient_funds"));
     }
 }

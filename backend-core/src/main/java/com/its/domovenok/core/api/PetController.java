@@ -4,6 +4,7 @@ import com.its.domovenok.core.dto.CreatePetRequestDto;
 import com.its.domovenok.core.dto.ErrorResponse;
 import com.its.domovenok.core.dto.GetPetsResponse;
 import com.its.domovenok.core.dto.PetDto;
+import com.its.domovenok.core.service.InsufficientFundsException;
 import com.its.domovenok.core.service.PetService;
 import com.its.domovenok.domain.model.Pet;
 import java.util.List;
@@ -52,19 +53,23 @@ public class PetController {
         if (userId == null) {
             return ResponseEntity.status(401).body(new ErrorResponse("Invalid or expired token"));
         }
-        Optional<Pet> created = petService.createPet(userId, request);
-        if (created.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse("unknown_type"));
+        try {
+            Optional<Pet> created = petService.createPet(userId, request);
+            if (created.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ErrorResponse("unknown_type"));
+            }
+            Pet pet = created.get();
+            PetDto dto = new PetDto(
+                    pet.getId(),
+                    pet.getName(),
+                    pet.getType().name(),
+                    null,
+                    pet.getHunger(),
+                    pet.getEnergy(),
+                    pet.getHappiness());
+            return ResponseEntity.status(201).body(dto);
+        } catch (InsufficientFundsException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse("insufficient_funds"));
         }
-        Pet pet = created.get();
-        PetDto dto = new PetDto(
-                pet.getId(),
-                pet.getName(),
-                pet.getType().name(),
-                null,
-                pet.getHunger(),
-                pet.getEnergy(),
-                pet.getHappiness());
-        return ResponseEntity.status(201).body(dto);
     }
 }

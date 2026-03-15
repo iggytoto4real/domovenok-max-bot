@@ -42,16 +42,21 @@ backend-core/
 | Метод | Путь | Описание |
 |-------|------|----------|
 | GET | `/api/pets` | Список питомцев пользователя (по токену в `Authorization: Bearer …`). |
-| POST | `/api/pets` | Создание питомца (покупка домового по типу). |
+| POST | `/api/pets` | Создание питомца (покупка домового по типу, со списанием денюжек). |
 
 **POST /api/pets** — тело запроса (`CreatePetRequest`):
 
 - `name` (string) — имя домовёнка;
 - `type` (string) — тип домового: `domovoy`, `dvorovoy`, `bannik`, `ovinnik`, `khlevnik`, `kikimora` (значения согласованы с `DomovoyType` в backend-domain и с mini-app).
 
-Ответ 201 — объект `PetDto`: `id`, `name`, `type`, `imageUrl` (пока null), `hunger`, `energy`, `happiness`. При неизвестном `type` — 400 с `{"error":"unknown_type"}`.
+Экономика и ответы:
 
-Типы домовых заданы в модуле backend-domain (`DomovoyType`).
+- Цена покупки одного питомца задаётся в `BalanceConstants.PET_PRICE_DENYUZHKI` (по умолчанию 300 денюжек); при успешной покупке сумма списывается с поля `denyuzhki` в `UserAccountEntity`.
+- Ответ 201 — объект `PetDto`: `id`, `name`, `type`, `imageUrl` (пока null), `hunger`, `energy`, `happiness`.
+- При неизвестном `type` — 400 с `{"error":"unknown_type"}`.
+- При недостатке средств — 400 с `{"error":"insufficient_funds"}` (баланс не меняется, операция полностью откатывается транзакцией).
+
+Типы домовых заданы в модуле backend-domain (`DomovoyType`), а баланс пользователя — в `UserAccountEntity`.
 
 ## Дальнейшее развитие
 
