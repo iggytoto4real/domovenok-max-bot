@@ -1,40 +1,15 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { PetItem, PetsState } from './types';
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { DomovoyTypeId, PetItem, PetsState } from './types';
 import type { RootState } from '../../app/store';
-import { getPets as apiGetPets } from '../../api/pets';
-import type { PetDto } from '../../api/pets';
-
-function toPetItem(pet: PetDto): PetItem {
-  return {
-    id: pet.id,
-    name: pet.name,
-    imageUrl: pet.imageUrl ?? undefined,
-    hunger: typeof pet.hunger === 'number' ? pet.hunger : 50,
-    energy: typeof pet.energy === 'number' ? pet.energy : 50,
-    happiness: typeof pet.happiness === 'number' ? pet.happiness : 50,
-  };
-}
+import { petsService } from '../../services/petsService';
 
 export const fetchPetsThunk = createAsyncThunk(
   'pets/fetchPets',
   async (_, { getState }): Promise<PetItem[]> => {
     const rootState = getState() as RootState;
-    const token = (rootState.user as { token: string | null }).token;
-    if (!token) {
-      return [];
-    }
-    const pets = await apiGetPets(token);
-    return pets.map((p) => toPetItem(p));
+    return petsService.getPets(rootState);
   }
 );
-
-// Локальный режим: фейковые питомцы
-export const loadFakePets = createAsyncThunk('pets/loadFakePets', async (): Promise<PetItem[]> => {
-  return [
-    { id: 1, name: 'Домовёнок Кузя', imageUrl: null, hunger: 30, energy: 80, happiness: 70 },
-    { id: 2, name: 'Домовёнок Фома', imageUrl: null, hunger: 70, energy: 40, happiness: 50 },
-  ];
-});
 
 const initialState: PetsState = {
   items: [],
@@ -45,7 +20,21 @@ const initialState: PetsState = {
 const petsSlice = createSlice({
   name: 'pets',
   initialState,
-  reducers: {},
+  reducers: {
+    addPet(state, action: PayloadAction<{ name: string; type: DomovoyTypeId }>) {
+      const maxId = state.items.reduce((acc, pet) => Math.max(acc, pet.id), 0);
+      const newId = maxId + 1;
+      state.items.push({
+        id: newId,
+        name: action.payload.name,
+        imageUrl: null,
+        domovoyTypeId: action.payload.type,
+        hunger: 50,
+        energy: 70,
+        happiness: 70,
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPetsThunk.pending, (state) => {
@@ -59,21 +48,10 @@ const petsSlice = createSlice({
       .addCase(fetchPetsThunk.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
-      })
-      .addCase(loadFakePets.pending, (state) => {
-        state.status = 'loading';
-        state.error = undefined;
-      })
-      .addCase(loadFakePets.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.items = action.payload;
-      })
-      .addCase(loadFakePets.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
       });
   },
 });
 
 export default petsSlice.reducer;
+export const { addPet } = petsSlice.actions;
 

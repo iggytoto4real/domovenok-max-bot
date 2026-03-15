@@ -4,6 +4,7 @@ import AddPetButton from './AddPetButton';
 
 interface PetsListProps {
   pets: PetItem[];
+  onAddPetClick?: () => void;
 }
 
 /** Полоска показателя 0–100 */
@@ -76,7 +77,7 @@ const PetCard: React.FC<{ pet: PetItem }> = ({ pet }) => {
   );
 };
 
-const PetsList: React.FC<PetsListProps> = ({ pets }) => {
+const PetsList: React.FC<PetsListProps> = ({ pets, onAddPetClick }) => {
   const hasPets = pets.length > 0;
 
   return (
@@ -94,7 +95,7 @@ const PetsList: React.FC<PetsListProps> = ({ pets }) => {
         </p>
       )}
 
-      <AddPetButton />
+      <AddPetButton onClick={onAddPetClick} />
     </section>
   );
 };

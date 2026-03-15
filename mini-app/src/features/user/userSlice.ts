@@ -1,49 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { UserState } from './types';
-import { getInitData } from '../../bridge/maxBridge';
-import { authInit as apiAuthInit } from '../../api/auth';
 import { EXCHANGE_RATE } from './constants';
+import { userService } from '../../services/userService';
 
-export const authInitThunk = createAsyncThunk(
-  'user/authInit',
-  async (): Promise<{
-    user: { id: number; firstName: string; lastName: string; username?: string; photoUrl?: string; denyuzhki: number; sokrovishcha: number };
-    token: string;
-    firstVisit: boolean;
-  }> => {
-    const initData = getInitData();
-    if (!initData) {
-      throw new Error('initData is not available');
-    }
-    const { user, token, firstVisit } = await apiAuthInit(initData);
-    return {
-      user: {
-        id: user.id,
-        firstName: user.firstName ?? '',
-        lastName: user.lastName ?? '',
-        username: user.username ?? undefined,
-        photoUrl: user.photoUrl ?? undefined,
-        denyuzhki: user.denyuzhki,
-        sokrovishcha: user.sokrovishcha,
-      },
-      token,
-      firstVisit,
-    };
-  }
-);
-
-// Локальный режим разработки: фейковые данные пользователя
-export const initWithFakeData = createAsyncThunk('user/initWithFakeData', async () => {
-  return {
-    id: 999,
-    firstName: 'Тестовый',
-    lastName: 'Пользователь',
-    username: 'test_user',
-    photoUrl: undefined as string | undefined,
-    denyuzhki: 150,
-    sokrovishcha: 3,
-  };
-});
+export const authInitThunk = createAsyncThunk('user/authInit', async () => userService.authInit());
 
 const initialState: UserState = {
   id: null,
@@ -94,24 +54,6 @@ const userSlice = createSlice({
         state.sokrovishcha = action.payload.user.sokrovishcha;
       })
       .addCase(authInitThunk.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      })
-      .addCase(initWithFakeData.pending, (state) => {
-        state.status = 'loading';
-        state.error = undefined;
-      })
-      .addCase(initWithFakeData.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.id = action.payload.id;
-        state.firstName = action.payload.firstName;
-        state.lastName = action.payload.lastName;
-        state.username = action.payload.username;
-        state.photoUrl = action.payload.photoUrl;
-        state.denyuzhki = action.payload.denyuzhki ?? 0;
-        state.sokrovishcha = action.payload.sokrovishcha ?? 0;
-      })
-      .addCase(initWithFakeData.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

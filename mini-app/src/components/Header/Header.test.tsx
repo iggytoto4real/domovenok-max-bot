@@ -9,7 +9,7 @@ const defaultProps = {
   photoUrl: null,
   denyuzhki: 50,
   sokrovishcha: 2,
-  mode: 'local' as const,
+  mode: 'dev' as const,
 };
 
 describe('Header', () => {

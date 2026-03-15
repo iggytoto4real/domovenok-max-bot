@@ -8,6 +8,8 @@ Web mini-приложение игры Домовёнок, которое отк
 - Работает внутри MAX через MAX Bridge (`window.WebApp`), общается с backend-core по HTTPS (REST API).
 - Данные о питомцах хранятся на бэкенде; фронт подтягивает их по токену.
 
+Отдельно описание типов домовых и UX выбора/покупки в mini-app см. в [docs/domovye-types-and-ux.md](../docs/domovye-types-and-ux.md).
+
 ## Стек и структура
 
 Основные технологии:
@@ -27,7 +29,7 @@ mini-app/
 
   src/
     main.tsx                 # Вход приложения, Provider, Browser init
-    App.tsx                  # Выбор режима (local / prod) и инициализация
+    App.tsx                  # Выбор режима (dev / prod), инициализация данных и экранов
     app/
       store.ts               # Конфигурация Redux store
     bridge/
@@ -36,27 +38,35 @@ mini-app/
       client.ts              # HTTP-клиент (base URL из VITE_API_URL)
       auth.ts                # POST /api/auth/init
       pets.ts                # GET /api/pets
+    services/
+      userService.ts         # Сервис авторизации: authInit (prod) и getFakeUser (dev)
+      petsService.ts         # Сервис питомцев: getPets (prod) и getFakePets (dev)
     features/
       user/
-        userSlice.ts         # Авторизация, init с фейковыми/реальными данными
+        userSlice.ts         # Redux-слайс пользователя, использует userService для prod/dev
         types.ts
       pets/
-        petsSlice.ts         # Список питомцев, загрузка из API или фейковых данных
+        petsSlice.ts         # Redux-слайс питомцев, использует petsService для prod/dev
         types.ts
     components/
-      Header.tsx             # Шапка: имя, ресурсы (Денюжки/Сокровища), аватар из MAX, меню (Настройки, Выход с подтверждением и закрытием мини-приложения)
-      PetsList.tsx           # Заголовок «Домовята», карточки питомцев (фото, имя, сытость/веселье/энергия), кнопка добавления
-      AddPetButton.tsx       # Карточка-призыв «Создать домовёнка» (стиль элемента списка, ? вместо фото)
+      Header/…               # Шапка: имя, ресурсы, меню пользователя
+      PetsList.tsx           # Заголовок «Домовята», карточки питомцев, кнопка добавления
+      AddPetButton.tsx       # Карточка-призыв «Создать домовёнка»
 ```
 
 В шапке отображаются ресурсы игрока (Денюжки, Сокровища) и аватар из MAX (в prod). Кнопка «Выход» показывает подтверждение («Домовята будут скучать без тебя!») и при согласии закрывает мини-приложение через `WebApp.close()`.
 
-## Режимы работы
+## Режимы работы и dev/prod логика
 
-- **local** — запуск в браузере без MAX и без backend-core, используются фейковые данные.
-- **prod** — запуск внутри MAX, реальный `initData` → backend-core (`/api/auth/init`, `/api/pets`).
+- **dev** — запуск через Vite (`npm run dev`) в обычном браузере:
+  - данные пользователя берутся из `userService.getFakeUser()`;
+  - питомцы загружаются из `petsService.getFakePets()` (фейковые домовята с типами домовых);
+  - покупка нового домового создаёт запись только в локальном Redux-состоянии.
+- **prod** — запуск внутри MAX:
+  - `authInit` идёт через backend-core (`/api/auth/init`), initData берётся из `window.WebApp`;
+  - список питомцев загружается из `/api/pets` через `petsService.getPets`.
 
-Режим определяется автоматически: при наличии `window.WebApp` (MAX) используется prod, иначе — local.
+Выбор режима (`dev` или `prod`) делается в `App.tsx` по `import.meta.env.DEV`. Redux-slice-ы (`userSlice`, `petsSlice`) не знают о режиме напрямую и работают через сервисный слой.
 
 ## Запуск
 
