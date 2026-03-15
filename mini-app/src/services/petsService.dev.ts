@@ -34,7 +34,7 @@ export const devPetsService: PetsService = {
     return basePets.map((p) => ({ ...p }));
   },
 
-  async createPet(params: { name: string; type: DomovoyTypeId }): Promise<PetItem> {
+  async createPet(_state: RootState, params: { name: string; type: DomovoyTypeId }): Promise<PetItem> {
     const newPet: PetItem = createFakePet(nextId++, params.name, params.type, 50, 70, 70);
     return newPet;
   },

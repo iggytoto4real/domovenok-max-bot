@@ -10,8 +10,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Pet {
 
+    /** Id записи в БД (null до сохранения). */
+    private Long id;
     private Long userId;
     private String name;
+    /** Тип домового (совпадает с DomovoyTypeId в mini-app). */
+    private DomovoyType type;
     private int hunger;      // 0-100
     private int energy;      // 0-100
     private int happiness;   // 0-100

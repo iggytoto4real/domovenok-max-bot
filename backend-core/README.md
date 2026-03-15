@@ -37,10 +37,26 @@ backend-core/
     application-dev.yml         # Профиль dev: H2 в памяти и упрощённые настройки
 ```
 
+## API питомцев
+
+| Метод | Путь | Описание |
+|-------|------|----------|
+| GET | `/api/pets` | Список питомцев пользователя (по токену в `Authorization: Bearer …`). |
+| POST | `/api/pets` | Создание питомца (покупка домового по типу). |
+
+**POST /api/pets** — тело запроса (`CreatePetRequest`):
+
+- `name` (string) — имя домовёнка;
+- `type` (string) — тип домового: `domovoy`, `dvorovoy`, `bannik`, `ovinnik`, `khlevnik`, `kikimora` (значения согласованы с `DomovoyType` в backend-domain и с mini-app).
+
+Ответ 201 — объект `PetDto`: `id`, `name`, `type`, `imageUrl` (пока null), `hunger`, `energy`, `happiness`. При неизвестном `type` — 400 с `{"error":"unknown_type"}`.
+
+Типы домовых заданы в модуле backend-domain (`DomovoyType`).
+
 ## Дальнейшее развитие
 
-- `persistence/` — JPA-сущности (`PetEntity`), репозитории и миграции (Flyway/Liquibase).
-- Расширение `PetService` для работы с БД и логики изменения состояний питомцев.
+- Миграции БД (Flyway/Liquibase) вместо `ddl-auto: update`.
+- Расширение логики изменения состояний питомцев (кормление, игры и т.д.).
 
 ## Запуск
 

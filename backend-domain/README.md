@@ -15,7 +15,8 @@ backend-domain/
   src/main/java/
     com/its/domovenok/domain/
       model/                 # Доменные сущности (Lombok @Data)
-        Pet.java             # Питомец: userId, name, hunger, energy, happiness, lastUpdatedAt
+        Pet.java             # Питомец: id, userId, name, type (DomovoyType), hunger, energy, happiness, lastUpdatedAt
+        DomovoyType.java     # Enum типов домового (domovoy, dvorovoy, bannik, ovinnik, khlevnik, kikimora) — значения совпадают с mini-app
         PetState.java        # Enum состояний (HAPPY, HUNGRY, SAD, SLEEPY)
         UserProfile.java     # Профиль пользователя MAX (id, firstName, lastName, username, photoUrl и т.д.)
 ```

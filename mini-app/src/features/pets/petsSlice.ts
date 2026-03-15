@@ -13,12 +13,12 @@ export const fetchPetsThunk = createAsyncThunk(
 
 export const createPetThunk = createAsyncThunk(
   'pets/createPet',
-  async (params: { name: string; type: DomovoyTypeId }): Promise<PetItem> => {
+  async (params: { name: string; type: DomovoyTypeId }, { getState }): Promise<PetItem> => {
     if (!petsService.createPet) {
       throw new Error('Pet creation is not supported in this mode');
     }
-    const created = await petsService.createPet(params);
-    return created;
+    const rootState = getState() as RootState;
+    return petsService.createPet(rootState, params);
   }
 );
 

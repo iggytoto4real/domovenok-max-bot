@@ -64,7 +64,8 @@ mini-app/
   - покупка нового домового создаёт запись только в локальном Redux-состоянии.
 - **prod** — запуск внутри MAX:
   - `authInit` идёт через backend-core (`/api/auth/init`), initData берётся из `window.WebApp`;
-  - список питомцев загружается из `/api/pets` через `petsService.getPets`.
+  - список питомцев загружается из `GET /api/pets` через `petsService.getPets`;
+  - покупка нового домового отправляется на `POST /api/pets` (имя и тип), ответ маппится в `PetItem` и добавляется в список.
 
 Выбор режима (`dev` или `prod`) делается в `App.tsx` по `import.meta.env.DEV`. Redux-slice-ы (`userSlice`, `petsSlice`) не знают о режиме напрямую и работают через сервисный слой.
 
