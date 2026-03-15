@@ -98,40 +98,62 @@ const App: React.FC = () => {
         open={user.status === 'succeeded' && user.firstVisit}
         onClose={() => dispatch(dismissWelcomeModal())}
       />
-      <main
+      <div
         style={{
           fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
-          padding: '16px',
           maxWidth: 480,
           margin: '0 auto',
+          height: '100vh',
+          padding: '16px',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <Header
-          firstName={user.firstName}
-          lastName={user.lastName}
-          photoUrl={user.photoUrl}
-          denyuzhki={user.denyuzhki}
-          sokrovishcha={user.sokrovishcha}
-          mode={mode}
-        />
-
-        {isLoading && <p>Загрузка…</p>}
-        {hasError && <p>Что-то пошло не так. Попробуйте ещё раз позже.</p>}
-
-        {showContent && viewMode === 'list' && (
-          <PetsList pets={pets.items} onAddPetClick={handleAddPetClick} />
-        )}
-
-        {showContent && viewMode === 'buy' && (
-          <DomovoyTypesScreen
-            selectedType={selectedDomovoyType}
-            onSelect={handleDomovoySelect}
-            onCancel={handleCancelBuy}
-            onConfirm={handleConfirmBuy}
-            priceDenyuzhki={PET_PRICE_DENYUZHKI}
-            canAfford={user.denyuzhki >= PET_PRICE_DENYUZHKI}
+        <div
+          style={{
+            flex: '0 0 auto',
+            position: 'sticky',
+            top: 0,
+            zIndex: 10,
+            backgroundColor: '#fff',
+          }}
+        >
+          <Header
+            firstName={user.firstName}
+            lastName={user.lastName}
+            photoUrl={user.photoUrl}
+            denyuzhki={user.denyuzhki}
+            sokrovishcha={user.sokrovishcha}
+            mode={mode}
           />
-        )}
+        </div>
+
+        <main
+          style={{
+            flex: '1 1 auto',
+            overflowY: 'auto',
+            paddingTop: 4,
+          }}
+        >
+          {isLoading && <p>Загрузка…</p>}
+          {hasError && <p>Что-то пошло не так. Попробуйте ещё раз позже.</p>}
+
+          {showContent && viewMode === 'list' && (
+            <PetsList pets={pets.items} onAddPetClick={handleAddPetClick} />
+          )}
+
+          {showContent && viewMode === 'buy' && (
+            <DomovoyTypesScreen
+              selectedType={selectedDomovoyType}
+              onSelect={handleDomovoySelect}
+              onCancel={handleCancelBuy}
+              onConfirm={handleConfirmBuy}
+              priceDenyuzhki={PET_PRICE_DENYUZHKI}
+              canAfford={user.denyuzhki >= PET_PRICE_DENYUZHKI}
+            />
+          )}
+        </main>
 
         <NamePetModal
           open={nameModalOpen}
@@ -139,7 +161,7 @@ const App: React.FC = () => {
           onCancel={handleNameModalCancel}
           onConfirm={handleNameModalConfirm}
         />
-      </main>
+      </div>
     </>
   );
 };

@@ -25,9 +25,17 @@ function createFakePet(
 const basePets: PetItem[] = [
   createFakePet(1, 'Домовёнок Кузя', 'domovoy', 30, 80, 70),
   createFakePet(2, 'Домовёнок Фома', 'dvorovoy', 70, 40, 50),
+  createFakePet(3, 'Банник Еремей', 'bannik', 40, 60, 65),
+  createFakePet(4, 'Овинник Прохор', 'ovinnik', 60, 55, 55),
+  createFakePet(5, 'Хлевник Савелий', 'khlevnik', 45, 75, 80),
+  createFakePet(6, 'Кикимора Агриппина', 'kikimora', 50, 50, 60),
+  createFakePet(7, 'Домовой Тимофей', 'domovoy', 20, 85, 90),
+  createFakePet(8, 'Дворовой Лавр', 'dvorovoy', 65, 45, 50),
+  createFakePet(9, 'Банник Пахом', 'bannik', 55, 65, 70),
+  createFakePet(10, 'Кикимора Стеша', 'kikimora', 35, 55, 75),
 ];
 
-let nextId = 3;
+let nextId = basePets.length + 1;
 
 export const devPetsService: PetsService = {
   async getPets(_state: RootState): Promise<PetItem[]> {
