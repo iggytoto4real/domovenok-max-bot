@@ -42,10 +42,10 @@ const AddPetButton: React.FC<AddPetButtonProps> = ({ onClick }) => {
       </div>
       <div style={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ fontSize: 15, color: '#555', lineHeight: 1.4 }}>
-          Добавь нового домовёнка — он будет радовать тебя и помогать по хозяйству.
+          Купи нового домовёнка — он будет радовать тебя и помогать по хозяйству.
         </div>
         <div style={{ marginTop: 8, fontSize: 14, fontWeight: 600, color: '#4b7bec' }}>
-          Создать домовёнка →
+          Купить домовёнка →
         </div>
       </div>
     </button>

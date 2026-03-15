@@ -37,9 +37,9 @@ const NamePetModal: React.FC<NamePetModalProps> = ({ open, initialName = '', onC
   const canConfirm = trimmed.length > 0;
 
   return (
-    <Modal open={open} onClose={onCancel} title="Назови домовёнка" titleId="name-pet-modal-title" zIndex={1100}>
+    <Modal open={open} onClose={onCancel} title="Назови покупку" titleId="name-pet-modal-title" zIndex={1100}>
       <p style={{ fontSize: 13, color: '#555', margin: '0 0 12px' }}>
-        Придумай имя для нового домовёнка. Он запомнит его надолго.
+        Придумай имя для домовёнка, которого ты покупаешь. Он запомнит его надолго.
       </p>
       <input
         type="text"
@@ -82,7 +82,7 @@ const NamePetModal: React.FC<NamePetModalProps> = ({ open, initialName = '', onC
             cursor: canConfirm ? 'pointer' : 'default',
           }}
         >
-          Создать домовёнка
+          Купить домовёнка
         </button>
       </div>
     </Modal>

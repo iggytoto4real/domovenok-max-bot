@@ -20,8 +20,8 @@ describe('App домовые и экран покупки', () => {
     // Заголовок списка
     expect(await screen.findByText('Домовята')).toBeInTheDocument();
 
-    // Кнопка создания домовёнка
-    expect(screen.getByText('Создать домовёнка →')).toBeInTheDocument();
+    // Кнопка покупки домовёнка
+    expect(screen.getByText('Купить домовёнка →')).toBeInTheDocument();
   });
 
   it('по клику на кнопку создания открывает экран выбора типа домового', async () => {
@@ -30,7 +30,7 @@ describe('App домовые и экран покупки', () => {
     // Дождаться списка
     await screen.findByText('Домовята');
 
-    fireEvent.click(screen.getByText('Создать домовёнка →'));
+    fireEvent.click(screen.getByText('Купить домовёнка →'));
 
     expect(await screen.findByText('Выбери домового')).toBeInTheDocument();
 
@@ -47,7 +47,7 @@ describe('App домовые и экран покупки', () => {
     renderWithStore(<App />);
 
     await screen.findByText('Домовята');
-    fireEvent.click(screen.getByText('Создать домовёнка →'));
+    fireEvent.click(screen.getByText('Купить домовёнка →'));
 
     await screen.findByText('Выбери домового');
 
@@ -61,7 +61,7 @@ describe('App домовые и экран покупки', () => {
 
     await screen.findByText('Домовята');
 
-    fireEvent.click(screen.getByText('Создать домовёнка →'));
+    fireEvent.click(screen.getByText('Купить домовёнка →'));
     await screen.findByText('Выбери домового');
 
     fireEvent.click(screen.getByText('Домовой'));
@@ -69,7 +69,7 @@ describe('App домовые и экран покупки', () => {
 
     const nameInput = await screen.findByPlaceholderText('Имя домовёнка');
     fireEvent.change(nameInput, { target: { value: 'Кузьма' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Создать домовёнка' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Купить домовёнка' }));
 
     expect(await screen.findByText('Домовята')).toBeInTheDocument();
     expect(screen.getByText('Кузьма')).toBeInTheDocument();

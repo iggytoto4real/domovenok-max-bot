@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from './app/store';
 import { ready } from './bridge/maxBridge';
 import { authInitThunk, dismissWelcomeModal } from './features/user/userSlice';
-import { fetchPetsThunk, addPet } from './features/pets/petsSlice';
+import { fetchPetsThunk, createPetThunk } from './features/pets/petsSlice';
 import type { DomovoyTypeId } from './features/pets/types';
 import Header from './components/Header';
 import PetsList from './components/PetsList';
@@ -61,7 +61,7 @@ const App: React.FC = () => {
   };
 
   const handleConfirmBuy = () => {
-    if (mode === 'dev' && selectedDomovoyType) {
+    if (selectedDomovoyType) {
       setNewPetName('');
       setNameModalOpen(true);
       return;
@@ -75,9 +75,9 @@ const App: React.FC = () => {
   };
 
   const handleNameModalConfirm = (name: string) => {
-    if (mode === 'dev' && selectedDomovoyType) {
+    if (selectedDomovoyType) {
       dispatch(
-        addPet({
+        createPetThunk({
           name,
           type: selectedDomovoyType,
         }),

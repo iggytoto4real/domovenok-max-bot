@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { UserState } from './types';
-import { EXCHANGE_RATE } from './constants';
 import { userService } from '../../services/userService';
+import { walletService } from '../../services/walletService';
 
 export const authInitThunk = createAsyncThunk('user/authInit', async () => userService.authInit());
 
@@ -25,10 +25,15 @@ const userSlice = createSlice({
   reducers: {
     /** Обмен сокровищ на денюжки. amount — сколько сокровищ отдаём. */
     exchangeSokrovishchaForDenyuzhki(state, action: { payload: number }) {
-      const amount = Math.max(0, Math.floor(action.payload));
-      if (amount > state.sokrovishcha) return;
-      state.sokrovishcha -= amount;
-      state.denyuzhki += amount * EXCHANGE_RATE;
+      const deltas = walletService.exchangeSokrovishchaForDenyuzhki(
+        state.sokrovishcha,
+        action.payload,
+      );
+      if (!deltas) {
+        return;
+      }
+      state.sokrovishcha += deltas.sokrovishchaDelta;
+      state.denyuzhki += deltas.denyuzhkiDelta;
     },
     /** Закрыть приветственную модалку (больше не показывать в этой сессии). */
     dismissWelcomeModal(state) {

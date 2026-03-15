@@ -21,20 +21,21 @@ function createFakePet(
   };
 }
 
-const fakePets: PetItem[] = [
+const basePets: PetItem[] = [
   createFakePet(1, 'Домовёнок Кузя', 'domovoy', 30, 80, 70),
   createFakePet(2, 'Домовёнок Фома', 'dvorovoy', 70, 40, 50),
 ];
 
+let nextId = 3;
+
 export const devPetsService: PetsService = {
   async getPets(_state: RootState): Promise<PetItem[]> {
-    return fakePets;
+    // возвращаем копию, чтобы не делиться замороженным массивом Redux
+    return basePets.map((p) => ({ ...p }));
   },
 
   async createPet(params: { name: string; type: DomovoyTypeId }): Promise<PetItem> {
-    const maxId = fakePets.reduce((acc, pet) => Math.max(acc, pet.id), 0);
-    const newPet: PetItem = createFakePet(maxId + 1, params.name, params.type, 50, 70, 70);
-    fakePets.push(newPet);
+    const newPet: PetItem = createFakePet(nextId++, params.name, params.type, 50, 70, 70);
     return newPet;
   },
 };
