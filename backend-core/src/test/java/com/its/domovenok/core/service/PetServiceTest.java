@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.its.domovenok.core.config.BalanceConstants;
 import com.its.domovenok.core.dto.CreatePetRequestDto;
+import com.its.domovenok.core.dto.CreatePetResult;
 import com.its.domovenok.core.dto.PetDto;
 import com.its.domovenok.core.persistence.PetEntity;
 import com.its.domovenok.core.persistence.PetRepository;
@@ -72,7 +73,7 @@ class PetServiceTest {
     void createPet_returnsEmpty_whenTypeUnknown() {
         CreatePetRequestDto request = CreatePetRequestDto.of("Кузя", "unknown_type");
         when(userAccountRepository.findById(100L)).thenReturn(Optional.of(new UserAccountEntity(100L, 1000, 1)));
-        Optional<Pet> result = petService.createPet(100L, request);
+        Optional<CreatePetResult> result = petService.createPet(100L, request);
 
         assertThat(result).isEmpty();
     }
@@ -88,10 +89,10 @@ class PetServiceTest {
             return e;
         });
 
-        Optional<Pet> result = petService.createPet(100L, request);
+        Optional<CreatePetResult> result = petService.createPet(100L, request);
 
         assertThat(result).isPresent();
-        Pet pet = result.get();
+        Pet pet = result.get().getPet();
         assertThat(pet.getId()).isEqualTo(42L);
         assertThat(pet.getUserId()).isEqualTo(100L);
         assertThat(pet.getName()).isEqualTo("Домовёнок Фома");
@@ -112,11 +113,11 @@ class PetServiceTest {
             return e;
         });
 
-        Optional<Pet> result = petService.createPet(200L, request);
+        Optional<CreatePetResult> result = petService.createPet(200L, request);
 
         assertThat(result).isPresent();
-        assertThat(result.get().getName()).isEqualTo("Домовёнок");
-        assertThat(result.get().getType()).isEqualTo(DomovoyType.bannik);
+        assertThat(result.get().getPet().getName()).isEqualTo("Домовёнок");
+        assertThat(result.get().getPet().getType()).isEqualTo(DomovoyType.bannik);
     }
 
     @Test

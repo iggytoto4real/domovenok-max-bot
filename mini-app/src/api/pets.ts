@@ -19,6 +19,12 @@ export interface CreatePetRequest {
   type: string;
 }
 
+export interface CreatePetResponse {
+  pet: PetDto;
+  denyuzhki: number;
+  sokrovishcha: number;
+}
+
 export async function getPets(token: string): Promise<PetDto[]> {
   const res = await apiFetch('/api/pets', { token });
   if (!res.ok) {
@@ -32,7 +38,7 @@ export async function getPets(token: string): Promise<PetDto[]> {
 export async function createPet(
   token: string,
   body: CreatePetRequest,
-): Promise<PetDto> {
+): Promise<CreatePetResponse> {
   const res = await apiFetch('/api/pets', {
     token,
     method: 'POST',

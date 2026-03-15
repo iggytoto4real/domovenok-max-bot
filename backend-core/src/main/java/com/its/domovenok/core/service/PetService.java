@@ -2,6 +2,7 @@ package com.its.domovenok.core.service;
 
 import com.its.domovenok.core.config.BalanceConstants;
 import com.its.domovenok.core.dto.CreatePetRequestDto;
+import com.its.domovenok.core.dto.CreatePetResult;
 import com.its.domovenok.core.dto.PetDto;
 import com.its.domovenok.core.persistence.PetEntity;
 import com.its.domovenok.core.persistence.PetRepository;
@@ -52,7 +53,7 @@ public class PetService {
      * Возвращает empty при неизвестном типе (контроллер вернёт 400). При недостатке денюжек бросает
      * {@link InsufficientFundsException}, который контроллер маппит в 400 с ошибкой {@code insufficient_funds}.
      */
-    public Optional<Pet> createPet(Long userId, CreatePetRequestDto request) {
+    public Optional<CreatePetResult> createPet(Long userId, CreatePetRequestDto request) {
         DomovoyType type = DomovoyType.fromString(request.getType());
         if (type == null) {
             return Optional.empty();
@@ -83,7 +84,7 @@ public class PetService {
                 now);
         entity = petRepository.save(entity);
         Pet pet = toDomain(entity);
-        return Optional.of(pet);
+        return Optional.of(new CreatePetResult(pet, account.getDenyuzhki(), account.getSokrovishcha()));
     }
 
     private static PetDto toDto(PetEntity e) {

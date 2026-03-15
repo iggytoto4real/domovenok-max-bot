@@ -4,6 +4,7 @@ import { ready } from './bridge/maxBridge';
 import { authInitThunk, dismissWelcomeModal } from './features/user/userSlice';
 import { fetchPetsThunk, createPetThunk } from './features/pets/petsSlice';
 import type { DomovoyTypeId } from './features/pets/types';
+import { PET_PRICE_DENYUZHKI } from './features/pets/types';
 import Header from './components/Header';
 import PetsList from './components/PetsList';
 import WelcomeModal from './components/WelcomeModal';
@@ -12,9 +13,6 @@ import NamePetModal from './components/NamePetModal';
 
 type Mode = 'prod' | 'dev';
 type ViewMode = 'list' | 'buy';
-
-// Должно быть синхронизировано с BalanceConstants.PET_PRICE_DENYUZHKI на бэкенде.
-const PET_PRICE_DENYUZHKI = 300;
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();

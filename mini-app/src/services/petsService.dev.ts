@@ -1,4 +1,5 @@
 import type { PetItem, DomovoyTypeId } from '../features/pets/types';
+import { PET_PRICE_DENYUZHKI } from '../features/pets/types';
 import type { RootState } from '../app/store';
 import type { PetsService } from './petsService';
 
@@ -34,9 +35,16 @@ export const devPetsService: PetsService = {
     return basePets.map((p) => ({ ...p }));
   },
 
-  async createPet(_state: RootState, params: { name: string; type: DomovoyTypeId }): Promise<PetItem> {
+  async createPet(
+    state: RootState,
+    params: { name: string; type: DomovoyTypeId },
+  ): Promise<{ pet: PetItem; denyuzhki: number; sokrovishcha: number }> {
     const newPet: PetItem = createFakePet(nextId++, params.name, params.type, 50, 70, 70);
-    return newPet;
+    const currentDenyuzhki = state.user.denyuzhki ?? 0;
+    const newDenyuzhki = Math.max(0, currentDenyuzhki - PET_PRICE_DENYUZHKI);
+    const newSokrovishcha = state.user.sokrovishcha ?? 0;
+
+    return { pet: newPet, denyuzhki: newDenyuzhki, sokrovishcha: newSokrovishcha };
   },
 };
 

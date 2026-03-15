@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.its.domovenok.core.dto.CreatePetRequestDto;
+import com.its.domovenok.core.dto.CreatePetResponse;
+import com.its.domovenok.core.dto.CreatePetResult;
 import com.its.domovenok.core.dto.PetDto;
 import com.its.domovenok.core.service.InsufficientFundsException;
 import com.its.domovenok.core.service.PetService;
@@ -97,7 +99,8 @@ class PetControllerTest {
     void createPet_returns201_withPetDto_whenValidRequest() throws Exception {
         when(petService.getUserIdByToken(VALID_TOKEN)).thenReturn(100L);
         Pet created = new Pet(42L, 100L, "Кузя", DomovoyType.domovoy, 50, 70, 70, Instant.now());
-        when(petService.createPet(eq(100L), any(CreatePetRequestDto.class))).thenReturn(Optional.of(created));
+        when(petService.createPet(eq(100L), any(CreatePetRequestDto.class)))
+                .thenReturn(Optional.of(new CreatePetResult(created, 700, 1)));
 
         String body = objectMapper.writeValueAsString(CreatePetRequestDto.of("Кузя", "domovoy"));
         mockMvc.perform(post("/api/pets")
@@ -105,12 +108,13 @@ class PetControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(42))
-                .andExpect(jsonPath("$.name").value("Кузя"))
-                .andExpect(jsonPath("$.type").value("domovoy"))
-                .andExpect(jsonPath("$.hunger").value(50))
-                .andExpect(jsonPath("$.energy").value(70))
-                .andExpect(jsonPath("$.happiness").value(70));
+                .andExpect(jsonPath("$.pet.id").value(42))
+                .andExpect(jsonPath("$.pet.name").value("Кузя"))
+                .andExpect(jsonPath("$.pet.type").value("domovoy"))
+                .andExpect(jsonPath("$.pet.hunger").value(50))
+                .andExpect(jsonPath("$.pet.energy").value(70))
+                .andExpect(jsonPath("$.pet.happiness").value(70))
+                .andExpect(jsonPath("$.denyuzhki").value(700));
     }
 
     @Test

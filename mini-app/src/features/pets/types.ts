@@ -1,3 +1,5 @@
+export const PET_PRICE_DENYUZHKI = 300; // sync with backend BalanceConstants.PET_PRICE_DENYUZHKI
+
 export type DomovoyTypeId =
   | 'domovoy'
   | 'dvorovoy'

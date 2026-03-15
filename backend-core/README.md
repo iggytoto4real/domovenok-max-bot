@@ -52,11 +52,14 @@ backend-core/
 Экономика и ответы:
 
 - Цена покупки одного питомца задаётся в `BalanceConstants.PET_PRICE_DENYUZHKI` (по умолчанию 300 денюжек); при успешной покупке сумма списывается с поля `denyuzhki` в `UserAccountEntity`.
-- Ответ 201 — объект `PetDto`: `id`, `name`, `type`, `imageUrl` (пока null), `hunger`, `energy`, `happiness`.
+- Ответ 201 — объект `CreatePetResponse`:
+  - `pet` — `PetDto`: `id`, `name`, `type`, `imageUrl` (пока null), `hunger`, `energy`, `happiness`;
+  - `denyuzhki` — актуальный баланс денюжек пользователя после покупки;
+  - `sokrovishcha` — актуальный баланс сокровищ пользователя.
 - При неизвестном `type` — 400 с `{"error":"unknown_type"}`.
 - При недостатке средств — 400 с `{"error":"insufficient_funds"}` (баланс не меняется, операция полностью откатывается транзакцией).
 
-Типы домовых заданы в модуле backend-domain (`DomovoyType`), а баланс пользователя — в `UserAccountEntity`.
+Типы домовых заданы в модуле backend-domain (`DomovoyType`), а баланс пользователя — в `UserAccountEntity`. DTO `CreatePetResult`/`CreatePetResponse` используются для синхронизации баланса между backend-core и mini-app.
 
 ## Дальнейшее развитие
 
