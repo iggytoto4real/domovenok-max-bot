@@ -1,8 +1,10 @@
 package com.its.domovenok.core.api;
 
+import com.its.domovenok.core.dto.ErrorResponse;
+import com.its.domovenok.core.dto.GetPetsResponse;
+import com.its.domovenok.core.dto.PetDto;
 import com.its.domovenok.core.service.PetService;
 import java.util.List;
-import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -23,13 +25,13 @@ public class PetController {
     public ResponseEntity<?> getPets(
             @RequestHeader(value = "Authorization", required = false) String authorization) {
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-            return ResponseEntity.status(401).body(Map.of("error", "Authorization required"));
+            return ResponseEntity.status(401).body(new ErrorResponse("Authorization required"));
         }
         String token = authorization.substring(7).trim();
-        List<Map<String, Object>> pets = petService.getPetsByToken(token);
+        List<PetDto> pets = petService.getPetsByToken(token);
         if (pets == null) {
-            return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
+            return ResponseEntity.status(401).body(new ErrorResponse("Invalid or expired token"));
         }
-        return ResponseEntity.ok(Map.of("pets", pets));
+        return ResponseEntity.ok(new GetPetsResponse(pets));
     }
 }

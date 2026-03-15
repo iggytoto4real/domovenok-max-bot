@@ -15,7 +15,7 @@ export interface HeaderProps {
   /** Ресурсы: Денюжки, Сокровища */
   denyuzhki: number;
   sokrovishcha: number;
-  mode: 'prod' | 'local' | 'max-fake';
+  mode: 'prod' | 'local';
 }
 
 const Header: React.FC<HeaderProps> = ({ firstName, lastName, photoUrl, denyuzhki, sokrovishcha, mode }) => {

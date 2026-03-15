@@ -7,8 +7,11 @@ export interface AuthInitResponse {
     lastName: string | null;
     username?: string | null;
     photoUrl?: string | null;
+    denyuzhki: number;
+    sokrovishcha: number;
   };
   token: string;
+  firstVisit: boolean;
 }
 
 export async function authInit(initData: string): Promise<AuthInitResponse> {

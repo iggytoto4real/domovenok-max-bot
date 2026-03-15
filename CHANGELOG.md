@@ -34,3 +34,12 @@
 #### Упрощение модалки «Денюжки»
 
 - В модалке «Денюжки» временно убрана кнопка **«Заработать денюжки»** — остались варианты обменять сокровища на денюжки или купить сокровища, плюс кнопка «Закрыть». UI и тексты остальных кнопок сохранены.
+
+#### Удаление режима max-fake: только Prod и Local
+
+- **Режимы:** оставлены только **prod** (в MAX с backend-core) и **local** (в браузере с фейковыми данными). Режим max-fake и всё, что с ним связано, удалены.
+- **mini-app:** в `App.tsx` убрана ветка max-fake; режим выставляется по `isMaxEnvironment()` (есть `window.WebApp` → prod, иначе local). Удалены импорты и использование `isFakeInMaxEnabled`, `getInitDataUnsafeUser`, `setUserFromMaxUnsafe`.
+- **bridge:** из `maxBridge.ts` удалены `isFakeInMaxEnabled()` и `getInitDataUnsafeUser()`, а также вспомогательные функции парсинга пользователя для unsafe-режима.
+- **userSlice:** удалён thunk `setUserFromMaxUnsafe` и все его обработчики в `extraReducers`. `initWithFakeData` и `loadFakePets` по-прежнему используются для local.
+- **Header:** тип `mode` изменён на `'prod' | 'local'`.
+- **Конфиг и доки:** из `.env.example` убраны переменная и комментарии про `VITE_USE_FAKE_IN_MAX` и `?fake=1`. Удалены `docs/MAX_FAKE_MODE.md` и workflow `.github/workflows/deploy-mini-app-fake.yml`. В корневом и mini-app README, а также в `docs/PROD_LAUNCH.md` убраны упоминания max-fake и деплоя fake-сборки.

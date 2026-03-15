@@ -1,8 +1,8 @@
 package com.its.domovenok.core.service;
 
+import com.its.domovenok.core.dto.PetDto;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ public class PetService {
 
     private final SessionStore sessionStore;
 
-    public List<Map<String, Object>> getPetsByToken(String token) {
+    public List<PetDto> getPetsByToken(String token) {
         Long userId = sessionStore.getUserId(token);
         if (userId == null) {
             return null;

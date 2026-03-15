@@ -19,7 +19,7 @@ public class WebConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
-            config.setAllowedOrigins(allowedOrigins);
+            config.setAllowedOriginPatterns(allowedOrigins);
         } else {
             config.addAllowedOriginPattern("*");
         }

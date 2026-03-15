@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from './app/store';
-import { isMaxEnvironment, isFakeInMaxEnabled, getInitDataUnsafeUser, ready } from './bridge/maxBridge';
-import { authInitThunk, initWithFakeData, setUserFromMaxUnsafe } from './features/user/userSlice';
+import { isMaxEnvironment, ready } from './bridge/maxBridge';
+import { authInitThunk, dismissWelcomeModal, initWithFakeData } from './features/user/userSlice';
 import { fetchPetsThunk, loadFakePets } from './features/pets/petsSlice';
 import Header from './components/Header';
 import PetsList from './components/PetsList';
+import WelcomeModal from './components/WelcomeModal';
 
-type Mode = 'prod' | 'local' | 'max-fake';
+type Mode = 'prod' | 'local';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -15,13 +16,7 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<Mode>('local');
 
   useEffect(() => {
-    if (!isMaxEnvironment()) {
-      setMode('local');
-    } else if (isFakeInMaxEnabled()) {
-      setMode('max-fake');
-    } else {
-      setMode('prod');
-    }
+    setMode(isMaxEnvironment() ? 'prod' : 'local');
   }, []);
 
   useEffect(() => {
@@ -35,26 +30,6 @@ const App: React.FC = () => {
         .catch(() => {
           // Ошибка будет отображена через user.status / error
         });
-    } else if (mode === 'max-fake') {
-      function trySetMaxUser() {
-        const maxUser = getInitDataUnsafeUser();
-        if (maxUser) {
-          dispatch(setUserFromMaxUnsafe(maxUser));
-          return true;
-        }
-        return false;
-      }
-      if (!trySetMaxUser()) dispatch(initWithFakeData());
-      const delays = [150, 400, 800];
-      const timers = delays.map((ms) =>
-        window.setTimeout(() => {
-          const maxUser = getInitDataUnsafeUser();
-          if (maxUser) dispatch(setUserFromMaxUnsafe(maxUser));
-        }, ms)
-      );
-      dispatch(loadFakePets());
-      ready();
-      return () => timers.forEach((t) => window.clearTimeout(t));
     } else {
       dispatch(initWithFakeData());
       dispatch(loadFakePets());
@@ -65,6 +40,11 @@ const App: React.FC = () => {
   const hasError = user.status === 'failed' || pets.status === 'failed';
 
   return (
+    <>
+      <WelcomeModal
+        open={user.status === 'succeeded' && user.firstVisit}
+        onClose={() => dispatch(dismissWelcomeModal())}
+      />
     <main
       style={{
         fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -87,6 +67,7 @@ const App: React.FC = () => {
 
       {!isLoading && !hasError && <PetsList pets={pets.items} />}
     </main>
+    </>
   );
 };
 

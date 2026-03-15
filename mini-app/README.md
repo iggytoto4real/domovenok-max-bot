@@ -23,11 +23,11 @@ Web mini-приложение игры Домовёнок, которое отк
 mini-app/
   package.json               # Скрипты dev/build/preview, зависимости React/Redux/Vite
   index.html                 # Точка входа Vite, подключение max-web-app.js, div#root
-  .env.example               # VITE_API_URL, VITE_USE_FAKE_IN_MAX
+  .env.example               # VITE_API_URL
 
   src/
     main.tsx                 # Вход приложения, Provider, Browser init
-    App.tsx                  # Выбор режима (local / prod / max-fake) и инициализация
+    App.tsx                  # Выбор режима (local / prod) и инициализация
     app/
       store.ts               # Конфигурация Redux store
     bridge/
@@ -49,18 +49,14 @@ mini-app/
       AddPetButton.tsx       # Карточка-призыв «Создать домовёнка» (стиль элемента списка, ? вместо фото)
 ```
 
-В шапке отображаются ресурсы игрока (Денюжки, Сокровища) и аватар из MAX (в max-fake и prod). Кнопка «Выход» показывает подтверждение («Домовята будут скучать без тебя!») и при согласии закрывает мини-приложение через `WebApp.close()`.
+В шапке отображаются ресурсы игрока (Денюжки, Сокровища) и аватар из MAX (в prod). Кнопка «Выход» показывает подтверждение («Домовята будут скучать без тебя!») и при согласии закрывает мини-приложение через `WebApp.close()`.
 
 ## Режимы работы
 
 - **local** — запуск в браузере без MAX и без backend-core, используются фейковые данные.
 - **prod** — запуск внутри MAX, реальный `initData` → backend-core (`/api/auth/init`, `/api/pets`).
-- **max-fake** — запуск внутри MAX, но без backend-core: имя пользователя берётся из `initDataUnsafe`, питомцы фейковые.
 
-Переключение режимов:
-
-- `VITE_USE_FAKE_IN_MAX=true` при сборке или
-- параметр `?fake=1` в URL мини-приложения (подробнее в `docs/PROD_LAUNCH.md`).
+Режим определяется автоматически: при наличии `window.WebApp` (MAX) используется prod, иначе — local.
 
 ## Запуск
 
@@ -77,15 +73,19 @@ npm install
 npm run dev
 ```
 
-Сборка под прод:
+Сборка (по умолчанию API — localhost:8080):
 
 ```bash
-export VITE_API_URL=https://api.твой-домен.ru   # URL backend-core
 npm run build
 ```
 
-В продакшене нужно раздавать статику из `dist/` по HTTPS и указать этот URL в настройках мини-приложения бота MAX.
+При пуше в `main` (путь `mini-app/**`) workflow деплоит собранное приложение на **GitHub Pages** (Settings → Pages → Source = GitHub Actions). URL: `https://<user>.github.io/domovenok-max-bot/`. Бэкенд пока можно поднимать локально — CORS по умолчанию разрешает origin с GitHub Pages.
 
-### Деплой fake-сборки на GitHub Pages
+Для боевого бэкенда задай URL при сборке и при необходимости обнови workflow:
 
-В репозитории настроен workflow `.github/workflows/deploy-mini-app-fake.yml`: при пуше в `main` (или по кнопке Run workflow) собирается mini-app с `VITE_USE_FAKE_IN_MAX=true` и выкладывается на GitHub Pages. В настройках репо: **Settings → Pages → Source: GitHub Actions**. URL вида `https://<user>.github.io/domovenok-max-bot/`; в MAX укажи его с `?fake=1` для max-fake.
+```bash
+export VITE_API_URL=https://api.твой-домен.ru
+npm run build
+```
+
+В продакшене укажи итоговый URL мини-приложения в настройках бота MAX.

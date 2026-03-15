@@ -1,7 +1,9 @@
 package com.its.domovenok.core.api;
 
+import com.its.domovenok.core.dto.AuthInitRequest;
+
+import com.its.domovenok.core.dto.ErrorResponse;
 import com.its.domovenok.core.service.AuthService;
-import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,13 +21,13 @@ public class AuthController {
     }
 
     @PostMapping("/init")
-    public ResponseEntity<?> init(@RequestBody Map<String, String> body) {
-        String initData = body.get("initData");
+    public ResponseEntity<?> init(@RequestBody AuthInitRequest body) {
+        String initData = body.getInitData();
         if (initData == null || initData.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "initData is required"));
+            return ResponseEntity.badRequest().body(new ErrorResponse("initData is required"));
         }
         return authService.init(initData)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(401).body(Map.of("error", "Invalid initData")));
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(401).body(new ErrorResponse("Invalid initData")));
     }
 }

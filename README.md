@@ -19,6 +19,6 @@
 - **Maven-модули** собираются из корня: `mvn clean install`
 - **mini-app** — отдельный фронт (React + Vite), не входит в Maven; запуск: `cd mini-app && npm run dev`
 
-Подробнее — в README каждого модуля. Режимы запуска (local, max-fake, prod) и деплой: [docs/LOCAL_MODE.md](docs/LOCAL_MODE.md), [docs/MAX_FAKE_MODE.md](docs/MAX_FAKE_MODE.md), [docs/PROD_LAUNCH.md](docs/PROD_LAUNCH.md).
+Подробнее — в README каждого модуля. Режимы запуска (local, prod) и деплой: [docs/LOCAL_MODE.md](docs/LOCAL_MODE.md), [docs/PROD_LAUNCH.md](docs/PROD_LAUNCH.md). Mini-app при пуше в `main` деплоится на GitHub Pages (см. [.github/workflows/deploy-mini-app.yml](.github/workflows/deploy-mini-app.yml)).
 
 История изменений: [CHANGELOG.md](CHANGELOG.md).

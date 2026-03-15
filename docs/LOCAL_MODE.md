@@ -29,6 +29,10 @@ mvn -pl backend-core spring-boot:run "-Dspring-boot.run.profiles=dev"
 В этом режиме используется H2 в памяти, PostgreSQL не нужен.  
 URL API по умолчанию: `http://localhost:8080` — его можно указать в `VITE_API_URL` при сборке фронта или использовать только для ручного тестирования.
 
+### Mini-app на GitHub Pages + бэкенд локально
+
+Если mini-app задеплоен на GitHub Pages (пуши в `main` по пути `mini-app/**` запускают workflow и деплой), приложение по умолчанию собрано с `VITE_API_URL=http://localhost:8080`. Можно открыть URL вида `https://<user>.github.io/domovenok-max-bot/`, поднять backend-core локально на 8080 — запросы пойдут на твой localhost. CORS в backend-core по умолчанию разрешает origin `https://*.github.io`, отдельно настраивать не нужно.
+
 ### Бот в чате с локали (long polling)
 
 Чтобы бот **отвечал в чате** (например на `/start`), не обязательно деплоить его: можно запустить `backend-bot` на своём компьютере. Используется long polling — бот сам опрашивает MAX, входящий URL с интернета не нужен.

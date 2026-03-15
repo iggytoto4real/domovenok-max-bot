@@ -6,10 +6,7 @@
 - mini-app задеплоен как статика по HTTPS;
 - бот в MAX привязан к мини-приложению.
 
-Режимы **local** и **max-fake** вынесены в отдельные файлы:
-
-- `docs/LOCAL_MODE.md` — локальная разработка (local) + long polling бота.
-- `docs/MAX_FAKE_MODE.md` — режим «MAX без бэкенда» (max-fake).
+Режим **local** описан в `docs/LOCAL_MODE.md` (локальная разработка + long polling бота).
 
 ---
 
@@ -18,7 +15,7 @@
 ### Переменные окружения
 
 - **MAX_BOT_TOKEN** — токен бота (Платформа MAX для партнёров → Чат-боты → Интеграция → Получить токен). Без него валидация `initData` не пройдёт.
-- **CORS_ALLOWED_ORIGINS** — через запятую разрешённые origins запросов к API (URL твоего мини-приложения по HTTPS и при необходимости `http://localhost:5173` для разработки). Пример: `https://domovenok.vercel.app`.
+- **CORS_ALLOWED_ORIGINS** — через запятую разрешённые origins или паттерны (по умолчанию: `http://localhost:5173`, `http://localhost:3000`, `https://*.github.io`). Для своего домена укажи явно, например: `https://твой-домен.vercel.app`. Паттерн `https://*.github.io` уже покрывает деплой на GitHub Pages.
 
 ### Деплой backend
 
@@ -30,7 +27,14 @@
 
 ## 2. Frontend (mini-app)
 
-### Сборка под прод
+### Деплой на GitHub Pages (из коробки)
+
+При пуше в `main` (изменения в `mini-app/**` или в workflow) GitHub Actions собирает mini-app и деплоит на GitHub Pages. Включи в репо: **Settings → Pages → Source = GitHub Actions**.
+
+- Сборка сейчас с `VITE_API_URL=http://localhost:8080` — удобно, когда бэкенд поднимаешь локально, а фронт открываешь с `https://<user>.github.io/domovenok-max-bot/`. CORS по умолчанию разрешает `https://*.github.io`.
+- Когда появится боевой бэкенд, поменяй `VITE_API_URL` в [.github/workflows/deploy-mini-app.yml](.github/workflows/deploy-mini-app.yml) и закоммить — следующий деплой уже будет ходить на него.
+
+### Сборка под прод (свой хостинг)
 
 Укажи URL бэкенда при сборке:
 
@@ -42,7 +46,7 @@ npm run build
 
 В `dist/` будет статика. Её нужно раздавать по **HTTPS**.
 
-### Деплой фронта
+### Деплой фронта (альтернатива GitHub Pages)
 
 - Залей содержимое `dist/` на любой статический хостинг с HTTPS (Vercel, Netlify, облачное хранилище + CDN и т.п.).
 - Итоговый URL мини-приложения, например: `https://domovenok.vercel.app`.
