@@ -41,6 +41,9 @@ jobs:
         env:
           VITE_API_URL: http://localhost:8080
 
+      - name: Add .nojekyll (disable Jekyll on GitHub Pages)
+        run: touch dist/.nojekyll
+
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

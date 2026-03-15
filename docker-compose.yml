@@ -1,0 +1,16 @@
+# PostgreSQL для backend-core (application.yml: localhost:5432/domovenok)
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: domovenok-postgres
+    environment:
+      POSTGRES_DB: domovenok
+      POSTGRES_USER: domovenok
+      POSTGRES_PASSWORD: domovenok
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
