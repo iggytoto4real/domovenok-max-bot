@@ -35,7 +35,7 @@ public class PetService {
         if (pets.isEmpty()) {
             throw new IllegalStateException("Pet not found for user id=" + userId);
         }
-        PetEntity entity = pets.getFirst();
+        PetEntity entity = pets.get(0);
         String name = rawName != null ? rawName.trim() : "";
         if (name.isEmpty()) {
             name = "Домовёнок";
@@ -55,8 +55,7 @@ public class PetService {
         if (pets.isEmpty()) {
             return null;
         }
-        PetEntity entity = pets.getFirst();
-        return toDto(entity);
+        return toDto(pets.get(0));
     }
 
     public PetDto createPet(Long userId, String rawName) {

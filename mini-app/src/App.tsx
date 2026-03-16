@@ -17,6 +17,7 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<Mode>('dev');
   const [nameModalOpen, setNameModalOpen] = useState(false);
   const [initialPetName, setInitialPetName] = useState<string | undefined>(undefined);
+   const [nameAsked, setNameAsked] = useState(false);
 
   useEffect(() => {
     const isDev = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV;
@@ -41,13 +42,15 @@ const App: React.FC = () => {
     if (
       user.status === 'succeeded' &&
       user.firstVisit &&
+      pets.status === 'succeeded' &&
       !pets.pet &&
-      !nameModalOpen
+      !nameAsked
     ) {
       setInitialPetName('');
       setNameModalOpen(true);
+      setNameAsked(true);
     }
-  }, [user.status, user.firstVisit, pets.pet, nameModalOpen]);
+  }, [user.status, user.firstVisit, pets.status, pets.pet, nameAsked]);
 
   const isLoading = user.status === 'loading' || pets.status === 'loading';
   const hasError = user.status === 'failed' || pets.status === 'failed';
