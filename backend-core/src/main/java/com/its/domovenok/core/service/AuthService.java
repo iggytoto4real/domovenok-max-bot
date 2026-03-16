@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,17 +39,30 @@ public class AuthService {
 
         int denyuzhki;
         int sokrovishcha;
+        boolean firstVisit;
         Optional<UserAccountEntity> accountOpt = userAccountRepository.findById(userId);
         if (accountOpt.isEmpty()) {
-            denyuzhki = BalanceConstants.INITIAL_DENYUZHKI;
-            sokrovishcha = BalanceConstants.INITIAL_SOKROVISHCHA;
-            userAccountRepository.save(new UserAccountEntity(userId, denyuzhki, sokrovishcha));
+            // пытаемся создать аккаунт; при гонке по id спокойно читаем уже существующий
+            try {
+                UserAccountEntity created = userAccountRepository.save(
+                        new UserAccountEntity(userId, BalanceConstants.INITIAL_DENYUZHKI, BalanceConstants.INITIAL_SOKROVISHCHA));
+                denyuzhki = created.getDenyuzhki();
+                sokrovishcha = created.getSokrovishcha();
+                firstVisit = true;
+            } catch (DataIntegrityViolationException ex) {
+                // параллельный init успел создать запись с тем же id
+                UserAccountEntity account = userAccountRepository.findById(userId)
+                        .orElseThrow(() -> ex);
+                denyuzhki = account.getDenyuzhki();
+                sokrovishcha = account.getSokrovishcha();
+                firstVisit = false;
+            }
         } else {
             UserAccountEntity account = accountOpt.get();
             denyuzhki = account.getDenyuzhki();
             sokrovishcha = account.getSokrovishcha();
+            firstVisit = false;
         }
-        boolean firstVisit = accountOpt.isEmpty();
 
         UserDto user = UserDto.of(userMap, denyuzhki, sokrovishcha);
         String token = UUID.randomUUID().toString();

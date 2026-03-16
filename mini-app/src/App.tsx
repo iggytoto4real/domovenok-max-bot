@@ -38,8 +38,14 @@ const App: React.FC = () => {
   }, [mode, dispatch]);
 
   useEffect(() => {
-    if (user.status === 'succeeded' && user.firstVisit && pets.pet && !nameModalOpen) {
-      setInitialPetName(pets.pet.name === 'Домовёнок' ? '' : pets.pet.name);
+    if (
+      user.status === 'succeeded' &&
+      user.firstVisit &&
+      pets.pet &&
+      pets.pet.name === 'Домовёнок' &&
+      !nameModalOpen
+    ) {
+      setInitialPetName('');
       setNameModalOpen(true);
     }
   }, [user.status, user.firstVisit, pets.pet, nameModalOpen]);
