@@ -21,6 +21,6 @@
 
 Подробнее — в README каждого модуля. Режимы запуска (local, prod) и деплой: [docs/LOCAL_MODE.md](docs/LOCAL_MODE.md), [docs/PROD_LAUNCH.md](docs/PROD_LAUNCH.md). Mini-app при пуше в `main` деплоится на GitHub Pages (см. [.github/workflows/deploy-mini-app.yml](.github/workflows/deploy-mini-app.yml)).
 
-Описание исторического дизайна типов домовых и текущего UX одного домовёнка в mini-app: [docs/domovye-types-and-ux.md](docs/domovye-types-and-ux.md).
+Описание устройства mini-app и UX одного домовёнка см. в README фронтенда: [mini-app/README.md](mini-app/README.md).
 
 История изменений: [CHANGELOG.md](CHANGELOG.md).

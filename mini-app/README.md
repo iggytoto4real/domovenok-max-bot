@@ -8,8 +8,6 @@ Web mini-приложение игры Домовёнок, которое отк
 - Работает внутри MAX через MAX Bridge (`window.WebApp`), общается с backend-core по HTTPS (REST API).
 - Данные о питомцах хранятся на бэкенде; фронт подтягивает их по токену.
 
-Отдельно описание типов домовых и UX выбора/покупки в mini-app см. в [docs/domovye-types-and-ux.md](../docs/domovye-types-and-ux.md).
-
 ## Стек и структура
 
 Основные технологии:

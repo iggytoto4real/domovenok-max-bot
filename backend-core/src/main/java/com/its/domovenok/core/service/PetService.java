@@ -30,7 +30,6 @@ public class PetService {
         return sessionStore.getUserId(token);
     }
 
-    @Transactional(readOnly = true)
     public PetDto getPetByToken(String token) {
         Long userId = sessionStore.getUserId(token);
         if (userId == null) {
