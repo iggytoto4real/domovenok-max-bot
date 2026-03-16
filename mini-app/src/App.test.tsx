@@ -9,70 +9,15 @@ vi.mock('./bridge/maxBridge', () => ({
   ready: vi.fn(),
 }));
 
-describe('App домовые и экран покупки', () => {
+describe('App домовёнок', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('по умолчанию показывает список домовят', async () => {
+  it('по умолчанию показывает домовёнка', async () => {
     renderWithStore(<App />);
 
-    // Заголовок списка
-    expect(await screen.findByText('Домовята')).toBeInTheDocument();
-
-    // Кнопка покупки домовёнка
-    expect(screen.getByText('Купить домовёнка →')).toBeInTheDocument();
-  });
-
-  it('по клику на кнопку создания открывает экран выбора типа домового', async () => {
-    renderWithStore(<App />);
-
-    // Дождаться списка
-    await screen.findByText('Домовята');
-
-    fireEvent.click(screen.getByText('Купить домовёнка →'));
-
-    expect(await screen.findByText('Выбери домового')).toBeInTheDocument();
-
-    // Шесть типов домовых по названиям
-    expect(screen.getByText('Домовой')).toBeInTheDocument();
-    expect(screen.getByText('Дворовой')).toBeInTheDocument();
-    expect(screen.getByText('Банник')).toBeInTheDocument();
-    expect(screen.getByText('Овинник')).toBeInTheDocument();
-    expect(screen.getByText('Хлевник')).toBeInTheDocument();
-    expect(screen.getByText('Домашняя кикимора')).toBeInTheDocument();
-  });
-
-  it('по кнопке Назад возвращается к списку домовят', async () => {
-    renderWithStore(<App />);
-
-    await screen.findByText('Домовята');
-    fireEvent.click(screen.getByText('Купить домовёнка →'));
-
-    await screen.findByText('Выбери домового');
-
-    fireEvent.click(screen.getByText('Назад к домовятам'));
-
-    expect(await screen.findByText('Домовята')).toBeInTheDocument();
-  });
-
-  it('в dev-режиме покупка создаёт нового домовёнка и возвращает к списку', async () => {
-    renderWithStore(<App />);
-
-    await screen.findByText('Домовята');
-
-    fireEvent.click(screen.getByText('Купить домовёнка →'));
-    await screen.findByText('Выбери домового');
-
-    fireEvent.click(screen.getByText('Домовой'));
-    fireEvent.click(screen.getByText('Продолжить'));
-
-    const nameInput = await screen.findByPlaceholderText('Имя домовёнка');
-    fireEvent.change(nameInput, { target: { value: 'Кузьма' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Купить домовёнка' }));
-
-    expect(await screen.findByText('Домовята')).toBeInTheDocument();
-    expect(screen.getByText('Кузьма')).toBeInTheDocument();
+    expect(await screen.findByText('Домовёнок')).toBeInTheDocument();
   });
 });
 

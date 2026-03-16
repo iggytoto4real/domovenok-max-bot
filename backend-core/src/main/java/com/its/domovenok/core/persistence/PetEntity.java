@@ -1,6 +1,5 @@
 package com.its.domovenok.core.persistence;
 
-import com.its.domovenok.domain.model.DomovoyType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,10 +29,6 @@ public class PetEntity {
 
     @Column(nullable = false)
     private String name;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 32)
-    private DomovoyType type;
 
     @Column(nullable = false)
     private int hunger = 50;

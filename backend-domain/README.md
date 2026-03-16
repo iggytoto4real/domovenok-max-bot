@@ -15,12 +15,9 @@ backend-domain/
   src/main/java/
     com/its/domovenok/domain/
       model/                 # Доменные сущности (Lombok @Data)
-        Pet.java             # Питомец: id, userId, name, type (DomovoyType), hunger, energy, happiness, lastUpdatedAt
-        DomovoyType.java     # Enum типов домового (domovoy, dvorovoy, bannik, ovinnik, khlevnik, kikimora) — значения совпадают с mini-app
+        Pet.java             # Домовёнок: id, userId, name, hunger, energy, happiness, lastUpdatedAt
         PetState.java        # Enum состояний (HAPPY, HUNGRY, SAD, SLEEPY)
         UserProfile.java     # Профиль пользователя MAX (id, firstName, lastName, username, photoUrl и т.д.)
 ```
 
 Модуль не запускается сам по себе — это библиотека. Собирается при `mvn install` из корня или из папки: `mvn clean install`.
-
-Концептуальное описание типов домовых и их ролей в игре см. в [docs/domovye-types-and-ux.md](../docs/domovye-types-and-ux.md). Оно используется как основа для развития доменной модели (в т.ч. возможного `DomovoyType` в будущем).

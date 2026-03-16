@@ -2,27 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from './app/store';
 import { ready } from './bridge/maxBridge';
 import { authInitThunk, dismissWelcomeModal } from './features/user/userSlice';
-import { fetchPetsThunk, createPetThunk } from './features/pets/petsSlice';
-import type { DomovoyTypeId } from './features/pets/types';
-import { PET_PRICE_DENYUZHKI } from './features/pets/types';
+import { fetchPetThunk } from './features/pets/petsSlice';
 import Header from './components/Header';
 import PetsList from './components/PetsList';
 import WelcomeModal from './components/WelcomeModal';
-import DomovoyTypesScreen from './components/DomovoyTypesScreen';
-import NamePetModal from './components/NamePetModal';
 
 type Mode = 'prod' | 'dev';
-type ViewMode = 'list' | 'buy';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.user);
   const pets = useAppSelector((state) => state.pets);
   const [mode, setMode] = useState<Mode>('dev');
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
-  const [selectedDomovoyType, setSelectedDomovoyType] = useState<DomovoyTypeId | null>(null);
-  const [nameModalOpen, setNameModalOpen] = useState(false);
-  const [newPetName, setNewPetName] = useState('');
 
   useEffect(() => {
     const isDev = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV;
@@ -33,7 +24,7 @@ const App: React.FC = () => {
     dispatch(authInitThunk())
       .unwrap()
       .then(() => {
-        dispatch(fetchPetsThunk());
+        dispatch(fetchPetThunk());
         if (mode === 'prod') {
           ready();
         }
@@ -47,50 +38,6 @@ const App: React.FC = () => {
   const hasError = user.status === 'failed' || pets.status === 'failed';
 
   const showContent = !isLoading && !hasError;
-
-  const handleAddPetClick = () => {
-    setSelectedDomovoyType(null);
-    setViewMode('buy');
-  };
-
-  const handleDomovoySelect = (typeId: DomovoyTypeId) => {
-    setSelectedDomovoyType(typeId);
-  };
-
-  const handleCancelBuy = () => {
-    setViewMode('list');
-  };
-
-  const handleConfirmBuy = () => {
-    if (selectedDomovoyType) {
-      if (user.denyuzhki < PET_PRICE_DENYUZHKI) {
-        // В проде дополнительно защита на бэкенде, здесь только UX-блокировка.
-        return;
-      }
-      setNewPetName('');
-      setNameModalOpen(true);
-      return;
-    }
-
-    setViewMode('list');
-  };
-
-  const handleNameModalCancel = () => {
-    setNameModalOpen(false);
-  };
-
-  const handleNameModalConfirm = (name: string) => {
-    if (selectedDomovoyType) {
-      dispatch(
-        createPetThunk({
-          name,
-          type: selectedDomovoyType,
-        }),
-      );
-    }
-    setNameModalOpen(false);
-    setViewMode('list');
-  };
 
   return (
     <>
@@ -139,28 +86,9 @@ const App: React.FC = () => {
           {isLoading && <p>Загрузка…</p>}
           {hasError && <p>Что-то пошло не так. Попробуйте ещё раз позже.</p>}
 
-          {showContent && viewMode === 'list' && (
-            <PetsList pets={pets.items} onAddPetClick={handleAddPetClick} />
-          )}
-
-          {showContent && viewMode === 'buy' && (
-            <DomovoyTypesScreen
-              selectedType={selectedDomovoyType}
-              onSelect={handleDomovoySelect}
-              onCancel={handleCancelBuy}
-              onConfirm={handleConfirmBuy}
-              priceDenyuzhki={PET_PRICE_DENYUZHKI}
-              canAfford={user.denyuzhki >= PET_PRICE_DENYUZHKI}
-            />
-          )}
+          {showContent && <PetsList pet={pets.pet} />}
         </main>
 
-        <NamePetModal
-          open={nameModalOpen}
-          initialName={newPetName}
-          onCancel={handleNameModalCancel}
-          onConfirm={handleNameModalConfirm}
-        />
       </div>
     </>
   );

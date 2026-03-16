@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class BotUpdateHandler {
 
     private static final String WELCOME_TEXT =
-            "Привет! Нажми кнопку «Играть», чтобы открыть своих домовят.\n\n"
+            "Привет! Нажми кнопку «Играть», чтобы открыть своего домовёнка.\n\n"
                     + "Канал с новостями разработки: https://max.ru/id246009594706_biz";
 
     private final MaxBotClient botClient;

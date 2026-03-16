@@ -37,29 +37,17 @@ backend-core/
     application-dev.yml         # Профиль dev: H2 в памяти и упрощённые настройки
 ```
 
-## API питомцев
+## API питомца
 
 | Метод | Путь | Описание |
 |-------|------|----------|
-| GET | `/api/pets` | Список питомцев пользователя (по токену в `Authorization: Bearer …`). |
-| POST | `/api/pets` | Создание питомца (покупка домового по типу, со списанием денюжек). |
+| GET | `/api/pet` | Единственный домовёнок пользователя (по токену в `Authorization: Bearer …`). |
 
-**POST /api/pets** — тело запроса (`CreatePetRequest`):
+**GET /api/pet**:
 
-- `name` (string) — имя домовёнка;
-- `type` (string) — тип домового: `domovoy`, `dvorovoy`, `bannik`, `ovinnik`, `khlevnik`, `kikimora` (значения согласованы с `DomovoyType` в backend-domain и с mini-app).
-
-Экономика и ответы:
-
-- Цена покупки одного питомца задаётся в `BalanceConstants.PET_PRICE_DENYUZHKI` (по умолчанию 300 денюжек); при успешной покупке сумма списывается с поля `denyuzhki` в `UserAccountEntity`.
-- Ответ 201 — объект `CreatePetResponse`:
-  - `pet` — `PetDto`: `id`, `name`, `type`, `imageUrl` (пока null), `hunger`, `energy`, `happiness`;
-  - `denyuzhki` — актуальный баланс денюжек пользователя после покупки;
-  - `sokrovishcha` — актуальный баланс сокровищ пользователя.
-- При неизвестном `type` — 400 с `{"error":"unknown_type"}`.
-- При недостатке средств — 400 с `{"error":"insufficient_funds"}` (баланс не меняется, операция полностью откатывается транзакцией).
-
-Типы домовых заданы в модуле backend-domain (`DomovoyType`), а баланс пользователя — в `UserAccountEntity`. DTO `CreatePetResult`/`CreatePetResponse` используются для синхронизации баланса между backend-core и mini-app.
+- Если токен невалиден или просрочен — 401 с `{"error":"Invalid or expired token"}`.
+- Если пользователь заходит впервые и питомца ещё нет — на стороне сервиса автоматически создаётся один стартовый домовёнок с дефолтными статами, без списания денюжек, и возвращается как `PetDto`.
+- При последующих запросах возвращается уже существующий питомец.
 
 ## Дальнейшее развитие
 

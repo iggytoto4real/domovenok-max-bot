@@ -45,7 +45,7 @@ const DenyuzhkiModal: React.FC<DenyuzhkiModalProps> = ({
         >
           <span style={{ display: 'block' }}>Обменять сокровища на денюжки</span>
           <span style={{ display: 'block', fontSize: 13, fontWeight: 500, opacity: 0.9, marginTop: 2 }}>
-            Меняй сокровища на денюжки и покупай всё необходимое для своих домовят — еду, игрушки и уют.
+            Меняй сокровища на денюжки и покупай всё необходимое для своего домовёнка — еду, игрушки и уют.
           </span>
         </button>
       ) : (
@@ -66,7 +66,7 @@ const DenyuzhkiModal: React.FC<DenyuzhkiModalProps> = ({
         >
           <span style={{ display: 'block' }}>Купить сокровища</span>
           <span style={{ display: 'block', fontSize: 13, fontWeight: 500, opacity: 0.9, marginTop: 2 }}>
-            Сокровища можно обменять на денюжки — на еду, игрушки и уют для домовят
+            Сокровища можно обменять на денюжки — на еду, игрушки и уют для домовёнка
           </span>
         </button>
       )}

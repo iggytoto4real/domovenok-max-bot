@@ -1,8 +1,7 @@
-import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { UserState } from './types';
 import { userService } from '../../services/userService';
 import { walletService } from '../../services/walletService';
-import { createPetThunk, type CreatePetPayload } from '../pets/petsSlice';
 
 export const authInitThunk = createAsyncThunk('user/authInit', async () => userService.authInit());
 
@@ -62,11 +61,6 @@ const userSlice = createSlice({
       .addCase(authInitThunk.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
-      })
-      .addCase(createPetThunk.fulfilled, (state, action: PayloadAction<CreatePetPayload>) => {
-        const { denyuzhki, sokrovishcha } = action.payload;
-        state.denyuzhki = denyuzhki;
-        state.sokrovishcha = sokrovishcha;
       });
   },
 });

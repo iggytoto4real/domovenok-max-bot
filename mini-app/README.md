@@ -4,7 +4,7 @@ Web mini-приложение игры Домовёнок, которое отк
 
 ## Зачем нужен
 
-- Интерфейс игры: пользователь видит своих домовят, кормит, играет и т.д.
+- Интерфейс игры: пользователь видит своего домовёнка, кормит, играет и т.д.
 - Работает внутри MAX через MAX Bridge (`window.WebApp`), общается с backend-core по HTTPS (REST API).
 - Данные о питомцах хранятся на бэкенде; фронт подтягивает их по токену.
 
@@ -37,7 +37,7 @@ mini-app/
     api/
       client.ts              # HTTP-клиент (base URL из VITE_API_URL)
       auth.ts                # POST /api/auth/init
-      pets.ts                # GET /api/pets
+      pets.ts                # GET /api/pet
     services/
       userService.ts         # Сервис авторизации: authInit (prod) и getFakeUser (dev)
       petsService.ts         # Сервис питомцев: getPets (prod) и getFakePets (dev)
@@ -46,12 +46,11 @@ mini-app/
         userSlice.ts         # Redux-слайс пользователя, использует userService для prod/dev
         types.ts
       pets/
-        petsSlice.ts         # Redux-слайс питомцев, использует petsService для prod/dev
+        petsSlice.ts         # Redux-слайс единственного питомца, использует petsService для prod/dev
         types.ts
     components/
       Header/…               # Шапка: имя, ресурсы, меню пользователя
-      PetsList.tsx           # Заголовок «Домовята», карточки питомцев, кнопка покупки
-      AddPetButton.tsx       # Карточка-призыв «Купить домовёнка»
+      PetsList.tsx           # Карточка единственного домовёнка
 ```
 
 В шапке отображаются ресурсы игрока (Денюжки, Сокровища) и аватар из MAX (в prod). Кнопка «Выход» показывает подтверждение («Домовята будут скучать без тебя!») и при согласии закрывает мини-приложение через `WebApp.close()`.
@@ -60,13 +59,10 @@ mini-app/
 
 - **dev** — запуск через Vite (`npm run dev`) в обычном браузере:
   - данные пользователя берутся из `userService.getFakeUser()`;
-  - питомцы загружаются из `petsService.getFakePets()` (фейковые домовята с типами домовых);
-  - покупка нового домового создаёт запись только в локальном Redux-состоянии.
+  - единственный питомец загружается из `petsService` (фейковый домовёнок создаётся в памяти автоматически).
 - **prod** — запуск внутри MAX:
   - `authInit` идёт через backend-core (`/api/auth/init`), initData берётся из `window.WebApp`;
-  - список питомцев загружается из `GET /api/pets` через `petsService.getPets`;
-  - покупка нового домового отправляется на `POST /api/pets` (имя и тип); backend-core списывает фиксированную цену в денюжках и создаёт питомца, в ответе приходит `CreatePetResponse` (питомец + обновлённые `denyuzhki`/`sokrovishcha`), который маппится в `PetItem`, а баланс пользователя в Redux обновляется по данным с бэка;
-  - при недостатке денюжек backend-core возвращает ошибку `{"error":"insufficient_funds"}`, а на экране выбора типа кнопка «Продолжить» блокируется, и пользователь видит, что баланса не хватает.
+  - единственный питомец загружается из `GET /api/pet` через `petsService.getPet`; если пользователь заходит впервые, backend-core автоматически создаёт домовёнка и возвращает его.
 
 Выбор режима (`dev` или `prod`) делается в `App.tsx` по `import.meta.env.DEV`. Redux-slice-ы (`userSlice`, `petsSlice`) не знают о режиме напрямую и работают через сервисный слой.
 

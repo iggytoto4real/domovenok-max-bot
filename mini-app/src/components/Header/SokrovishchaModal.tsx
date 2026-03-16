@@ -40,7 +40,7 @@ const SokrovishchaModal: React.FC<SokrovishchaModalProps> = ({
       >
         <span style={{ display: 'block' }}>Купить сокровища</span>
         <span style={{ display: 'block', fontSize: 13, fontWeight: 500, opacity: 0.9, marginTop: 2 }}>
-          Сокровища можно обменять на денюжки — на еду, игрушки и уют для домовят
+          Сокровища можно обменять на денюжки — на еду, игрушки и уют для домовёнка
         </span>
       </button>
       <button

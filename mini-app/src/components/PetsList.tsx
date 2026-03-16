@@ -1,10 +1,8 @@
 import React from 'react';
 import type { PetItem } from '../features/pets/types';
-import AddPetButton from './AddPetButton';
 
 interface PetsListProps {
-  pets: PetItem[];
-  onAddPetClick?: () => void;
+  pet: PetItem | null;
 }
 
 /** Полоска показателя 0–100 */
@@ -77,25 +75,21 @@ const PetCard: React.FC<{ pet: PetItem }> = ({ pet }) => {
   );
 };
 
-const PetsList: React.FC<PetsListProps> = ({ pets, onAddPetClick }) => {
-  const hasPets = pets.length > 0;
+const PetsList: React.FC<PetsListProps> = ({ pet }) => {
+  const hasPet = !!pet;
 
   return (
     <section>
-      <h2 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 600, textAlign: 'center' }}>Домовята</h2>
-      {hasPets ? (
+      <h2 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 600, textAlign: 'center' }}>Домовёнок</h2>
+      {hasPet ? (
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          {pets.map((pet) => (
-            <PetCard key={pet.id} pet={pet} />
-          ))}
+          {pet && <PetCard key={pet.id} pet={pet} />}
         </ul>
       ) : (
         <p style={{ fontSize: 14, color: '#555' }}>
-          У тебя пока нет домовят.
+          Домовёнок ещё не появился.
         </p>
       )}
-
-      <AddPetButton onClick={onAddPetClick} />
     </section>
   );
 };

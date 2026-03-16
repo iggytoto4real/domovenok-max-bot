@@ -1,20 +1,8 @@
-export const PET_PRICE_DENYUZHKI = 300; // sync with backend BalanceConstants.PET_PRICE_DENYUZHKI
-
-export type DomovoyTypeId =
-  | 'domovoy'
-  | 'dvorovoy'
-  | 'bannik'
-  | 'ovinnik'
-  | 'khlevnik'
-  | 'kikimora';
-
 export interface PetItem {
   id: number;
   name: string;
   /** URL картинки домовёнка */
   imageUrl?: string | null;
-  /** Тип домового (только в dev/локальном режиме, пока без бэкенда) */
-  domovoyTypeId?: DomovoyTypeId;
   /** Голод 0–100 (для сытости показываем 100 − hunger) */
   hunger: number;
   /** Энергия 0–100 */
@@ -24,10 +12,8 @@ export interface PetItem {
 }
 
 export interface PetsState {
-  items: PetItem[];
+  pet: PetItem | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error?: string;
-  creating: boolean;
-  createError?: string;
 }
 
