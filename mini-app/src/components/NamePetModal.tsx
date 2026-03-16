@@ -25,7 +25,14 @@ const NamePetModal: React.FC<NamePetModalProps> = ({ open, initialName, onCancel
   }
 
   return (
-    <Modal open={open} onClose={onCancel} title="Имя домовёнка" titleId="pet-name-modal-title">
+    <Modal open={open} onClose={onCancel} title="Добро пожаловать!" titleId="pet-name-modal-title">
+      <p style={{ margin: '0 0 12px', fontSize: 15, lineHeight: 1.5, color: '#333', textAlign: 'left' }}>
+        Ты в мире Домовёнка — маленького помощника, который живёт рядом с тобой и ждёт твоей заботы.
+        Заботься о своём домовёнке, корми его, играй с ним — и он станет верным другом!
+      </p>
+      <p style={{ margin: '0 0 16px', fontSize: 15, lineHeight: 1.5, color: '#333', textAlign: 'left' }}>
+        На старт тебе уже начислены денюжки и сокровище. Вперёд — делай своего домовёнка счастливым!
+      </p>
       <p style={{ margin: '0 0 16px', fontSize: 15, lineHeight: 1.5, color: '#333', textAlign: 'left' }}>
         Придумай имя для своего домовёнка.
       </p>

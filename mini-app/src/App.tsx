@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from './app/store';
 import { ready } from './bridge/maxBridge';
-import { authInitThunk, dismissWelcomeModal } from './features/user/userSlice';
+import { authInitThunk } from './features/user/userSlice';
 import { fetchPetThunk, createPetThunk } from './features/pets/petsSlice';
 import Header from './components/Header';
 import PetsList from './components/PetsList';
-import WelcomeModal from './components/WelcomeModal';
 import NamePetModal from './components/NamePetModal';
 
 type Mode = 'prod' | 'dev';
@@ -17,7 +16,7 @@ const App: React.FC = () => {
   const [mode, setMode] = useState<Mode>('dev');
   const [nameModalOpen, setNameModalOpen] = useState(false);
   const [initialPetName, setInitialPetName] = useState<string | undefined>(undefined);
-   const [nameAsked, setNameAsked] = useState(false);
+  const [nameAsked, setNameAsked] = useState(false);
 
   useEffect(() => {
     const isDev = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV;
@@ -59,10 +58,6 @@ const App: React.FC = () => {
 
   return (
     <>
-      <WelcomeModal
-        open={user.status === 'succeeded' && user.firstVisit}
-        onClose={() => dispatch(dismissWelcomeModal())}
-      />
       <div
         style={{
           fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
