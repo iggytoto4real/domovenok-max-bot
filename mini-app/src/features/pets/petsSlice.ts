@@ -11,6 +11,17 @@ export const fetchPetThunk = createAsyncThunk(
   }
 );
 
+export const updatePetNameThunk = createAsyncThunk<PetItem, string, { state: RootState }>(
+  'pets/updatePetName',
+  async (name, { getState }) => {
+    const rootState = getState() as RootState;
+    if (!petsService.updateName) {
+      throw new Error('Pet name update is not supported in this mode');
+    }
+    return petsService.updateName(rootState, name);
+  }
+);
+
 const initialState: PetsState = {
   pet: null,
   status: 'idle',
@@ -36,6 +47,9 @@ const petsSlice = createSlice({
       .addCase(fetchPetThunk.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+      })
+      .addCase(updatePetNameThunk.fulfilled, (state, action) => {
+        state.pet = action.payload;
       });
   },
 });

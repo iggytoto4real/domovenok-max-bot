@@ -17,3 +17,16 @@ export async function getPet(token: string): Promise<PetDto> {
   }
   return res.json();
 }
+
+export async function updatePetName(token: string, name: string): Promise<PetDto> {
+  const res = await apiFetch('/api/pet', {
+    token,
+    method: 'PATCH',
+    body: JSON.stringify({ name }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as any).error ?? `Failed to update pet: ${res.status}`);
+  }
+  return res.json();
+}

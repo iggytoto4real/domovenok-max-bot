@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from './app/store';
 import { ready } from './bridge/maxBridge';
 import { authInitThunk, dismissWelcomeModal } from './features/user/userSlice';
-import { fetchPetThunk } from './features/pets/petsSlice';
+import { fetchPetThunk, updatePetNameThunk } from './features/pets/petsSlice';
 import Header from './components/Header';
 import PetsList from './components/PetsList';
 import WelcomeModal from './components/WelcomeModal';
+import NamePetModal from './components/NamePetModal';
 
 type Mode = 'prod' | 'dev';
 
@@ -14,6 +15,8 @@ const App: React.FC = () => {
   const user = useAppSelector((state) => state.user);
   const pets = useAppSelector((state) => state.pets);
   const [mode, setMode] = useState<Mode>('dev');
+  const [nameModalOpen, setNameModalOpen] = useState(false);
+  const [initialPetName, setInitialPetName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const isDev = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV;
@@ -33,6 +36,13 @@ const App: React.FC = () => {
         // Ошибка будет отображена через user.status / error
       });
   }, [mode, dispatch]);
+
+  useEffect(() => {
+    if (user.status === 'succeeded' && user.firstVisit && pets.pet && !nameModalOpen) {
+      setInitialPetName(pets.pet.name === 'Домовёнок' ? '' : pets.pet.name);
+      setNameModalOpen(true);
+    }
+  }, [user.status, user.firstVisit, pets.pet, nameModalOpen]);
 
   const isLoading = user.status === 'loading' || pets.status === 'loading';
   const hasError = user.status === 'failed' || pets.status === 'failed';
@@ -90,6 +100,15 @@ const App: React.FC = () => {
         </main>
 
       </div>
+      <NamePetModal
+        open={nameModalOpen}
+        initialName={initialPetName}
+        onCancel={() => setNameModalOpen(false)}
+        onConfirm={(name) => {
+          dispatch(updatePetNameThunk(name));
+          setNameModalOpen(false);
+        }}
+      />
     </>
   );
 };

@@ -19,5 +19,13 @@ export const devPetsService: PetsService = {
   async getPet(_state: RootState): Promise<PetItem | null> {
     return currentPet ? { ...currentPet } : null;
   },
+  async updateName(_state: RootState, name: string): Promise<PetItem> {
+    if (!currentPet) {
+      currentPet = createFakePet(1, name || 'Домовёнок', 50, 70, 70);
+    } else {
+      currentPet = { ...currentPet, name: name || 'Домовёнок' };
+    }
+    return { ...currentPet };
+  },
 };
 

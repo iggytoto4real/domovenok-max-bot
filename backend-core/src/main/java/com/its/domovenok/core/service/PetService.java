@@ -30,6 +30,22 @@ public class PetService {
         return sessionStore.getUserId(token);
     }
 
+    public PetDto updatePetName(Long userId, String rawName) {
+        Optional<PetEntity> existing = petRepository.findByUserId(userId);
+        if (existing.isEmpty()) {
+            throw new IllegalStateException("Pet not found for user id=" + userId);
+        }
+        PetEntity entity = existing.get();
+        String name = rawName != null ? rawName.trim() : "";
+        if (name.isEmpty()) {
+            name = "Домовёнок";
+        }
+        entity.setName(name);
+        entity.setLastUpdatedAt(Instant.now());
+        entity = petRepository.save(entity);
+        return toDto(entity);
+    }
+
     public PetDto getPetByToken(String token) {
         Long userId = sessionStore.getUserId(token);
         if (userId == null) {

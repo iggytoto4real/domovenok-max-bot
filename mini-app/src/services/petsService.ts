@@ -8,6 +8,7 @@ import { devPetsService } from './petsService.dev';
  */
 export interface PetsService {
   getPet(state: RootState): Promise<PetItem | null>;
+  updateName?(state: RootState, name: string): Promise<PetItem>;
 }
 
 const isDev = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV;
