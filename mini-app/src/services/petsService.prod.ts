@@ -1,5 +1,5 @@
 import type { PetDto } from '../api/pets';
-import { getPet as apiGetPet, updatePetName as apiUpdatePetName } from '../api/pets';
+import { getPet as apiGetPet, createPet as apiCreatePet, updatePetName as apiUpdatePetName } from '../api/pets';
 import type { PetItem } from '../features/pets/types';
 import type { RootState } from '../app/store';
 import type { PetsService } from './petsService';
@@ -22,6 +22,14 @@ export const prodPetsService: PetsService = {
       return null;
     }
     const pet = await apiGetPet(token);
+    return pet ? toPetItem(pet) : null;
+  },
+  async createPet(state: RootState, name: string): Promise<PetItem> {
+    const token = state.user.token;
+    if (!token) {
+      throw new Error('Not authorized');
+    }
+    const pet = await apiCreatePet(token, name);
     return toPetItem(pet);
   },
   async updateName(state: RootState, name: string): Promise<PetItem> {

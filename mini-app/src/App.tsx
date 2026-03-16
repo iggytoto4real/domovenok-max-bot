@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from './app/store';
 import { ready } from './bridge/maxBridge';
 import { authInitThunk, dismissWelcomeModal } from './features/user/userSlice';
-import { fetchPetThunk, updatePetNameThunk } from './features/pets/petsSlice';
+import { fetchPetThunk, createPetThunk } from './features/pets/petsSlice';
 import Header from './components/Header';
 import PetsList from './components/PetsList';
 import WelcomeModal from './components/WelcomeModal';
@@ -41,8 +41,7 @@ const App: React.FC = () => {
     if (
       user.status === 'succeeded' &&
       user.firstVisit &&
-      pets.pet &&
-      pets.pet.name === 'Домовёнок' &&
+      !pets.pet &&
       !nameModalOpen
     ) {
       setInitialPetName('');
@@ -111,7 +110,7 @@ const App: React.FC = () => {
         initialName={initialPetName}
         onCancel={() => setNameModalOpen(false)}
         onConfirm={(name) => {
-          dispatch(updatePetNameThunk(name));
+          dispatch(createPetThunk(name));
           setNameModalOpen(false);
         }}
       />

@@ -7,6 +7,7 @@ import com.its.domovenok.core.service.PetService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +32,29 @@ public class PetController {
         String token = authorization.substring(7).trim();
         PetDto pet = petService.getPetByToken(token);
         if (pet == null) {
-            return ResponseEntity.status(401).body(new ErrorResponse("Invalid or expired token"));
+            return ResponseEntity.status(404).body(new ErrorResponse("pet_not_found"));
         }
         return ResponseEntity.ok(pet);
+    }
+
+    @PostMapping("/pet")
+    public ResponseEntity<?> createPet(
+            @RequestHeader(value = "Authorization", required = false) String authorization,
+            @RequestBody UpdatePetNameRequestDto request) {
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body(new ErrorResponse("Authorization required"));
+        }
+        String token = authorization.substring(7).trim();
+        Long userId = petService.getUserIdByToken(token);
+        if (userId == null) {
+            return ResponseEntity.status(401).body(new ErrorResponse("Invalid or expired token"));
+        }
+        try {
+            PetDto pet = petService.createPet(userId, request.getName());
+            return ResponseEntity.status(201).body(pet);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(new ErrorResponse("pet_already_exists"));
+        }
     }
 
     @PatchMapping("/pet")

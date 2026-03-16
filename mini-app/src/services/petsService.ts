@@ -8,6 +8,7 @@ import { devPetsService } from './petsService.dev';
  */
 export interface PetsService {
   getPet(state: RootState): Promise<PetItem | null>;
+  createPet?(state: RootState, name: string): Promise<PetItem>;
   updateName?(state: RootState, name: string): Promise<PetItem>;
 }
 

@@ -1,9 +1,9 @@
 package com.its.domovenok.core.persistence;
 
-import java.util.Optional;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PetRepository extends JpaRepository<PetEntity, Long> {
 
-    Optional<PetEntity> findByUserId(Long userId);
+    List<PetEntity> findAllByUserIdOrderByIdAsc(Long userId);
 }

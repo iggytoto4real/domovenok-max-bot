@@ -31,11 +31,11 @@ public class PetService {
     }
 
     public PetDto updatePetName(Long userId, String rawName) {
-        Optional<PetEntity> existing = petRepository.findByUserId(userId);
-        if (existing.isEmpty()) {
+        List<PetEntity> pets = petRepository.findAllByUserIdOrderByIdAsc(userId);
+        if (pets.isEmpty()) {
             throw new IllegalStateException("Pet not found for user id=" + userId);
         }
-        PetEntity entity = existing.get();
+        PetEntity entity = pets.getFirst();
         String name = rawName != null ? rawName.trim() : "";
         if (name.isEmpty()) {
             name = "Домовёнок";
@@ -51,16 +51,28 @@ public class PetService {
         if (userId == null) {
             return null;
         }
-        Optional<PetEntity> existing = petRepository.findByUserId(userId);
-        if (existing.isPresent()) {
-            return toDto(existing.get());
+        List<PetEntity> pets = petRepository.findAllByUserIdOrderByIdAsc(userId);
+        if (pets.isEmpty()) {
+            return null;
         }
-        // создаём первого и единственного домовёнка без списания денюжек
+        PetEntity entity = pets.getFirst();
+        return toDto(entity);
+    }
+
+    public PetDto createPet(Long userId, String rawName) {
+        List<PetEntity> existing = petRepository.findAllByUserIdOrderByIdAsc(userId);
+        if (!existing.isEmpty()) {
+            throw new IllegalStateException("Pet already exists for user id=" + userId);
+        }
+        String name = rawName != null ? rawName.trim() : "";
+        if (name.isEmpty()) {
+            name = "Домовёнок";
+        }
         Instant now = Instant.now();
         PetEntity entity = new PetEntity(
                 null,
                 userId,
-                "Домовёнок",
+                name,
                 START_HUNGER,
                 START_ENERGY,
                 START_HAPPINESS,
