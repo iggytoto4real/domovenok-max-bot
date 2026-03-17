@@ -26,7 +26,7 @@ public class AuthController {
         if (initData == null || initData.isBlank()) {
             return ResponseEntity.badRequest().body(new ErrorResponse("initData is required"));
         }
-        return authService.init(initData)
+        return authService.init(initData, body.getTimeZone(), body.getOffsetHours())
                 .<ResponseEntity<?>>map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(401).body(new ErrorResponse("Invalid initData")));
     }

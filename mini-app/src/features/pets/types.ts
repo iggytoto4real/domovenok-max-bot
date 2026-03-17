@@ -9,6 +9,8 @@ export interface PetItem {
   energy: number;
   /** Веселье 0–100 */
   happiness: number;
+  /** Время суток с точки зрения сервера: DAY или NIGHT */
+  timeOfDay?: 'DAY' | 'NIGHT' | null;
 }
 
 export interface PetsState {

@@ -8,9 +8,15 @@ import lombok.Value;
 public class AuthInitRequest {
 
     String initData;
+    String timeZone;
+    Integer offsetHours;
 
     @JsonCreator
-    public static AuthInitRequest of(@JsonProperty("initData") String initData) {
-        return new AuthInitRequest(initData);
+    public static AuthInitRequest of(
+            @JsonProperty("initData") String initData,
+            @JsonProperty("timeZone") String timeZone,
+            @JsonProperty("offsetHours") Integer offsetHours
+    ) {
+        return new AuthInitRequest(initData, timeZone, offsetHours);
     }
 }

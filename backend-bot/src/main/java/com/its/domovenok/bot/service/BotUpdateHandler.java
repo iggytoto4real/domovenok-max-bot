@@ -15,8 +15,12 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class BotUpdateHandler {
 
-    private static final String WELCOME_TEXT =
-            "Привет! Нажми кнопку «Играть», чтобы открыть своего домовёнка.\n\n"
+    private static final String WELCOME_TEXT_DAY =
+            "Добрый день! Нажми кнопку «Играть», чтобы открыть своего домовёнка.\n\n"
+                    + "Канал с новостями разработки: https://max.ru/id246009594706_biz";
+
+    private static final String WELCOME_TEXT_NIGHT =
+            "Добрый вечер! Нажми кнопку «Играть», чтобы открыть своего домовёнка.\n\n"
                     + "Канал с новостями разработки: https://max.ru/id246009594706_biz";
 
     private final MaxBotClient botClient;
@@ -27,7 +31,7 @@ public class BotUpdateHandler {
             Long userId = extractUserId(update);
             if (userId == null) return;
             if ("/start".equals(text) || (text != null && text.strip().toLowerCase().startsWith("/start"))) {
-                botClient.sendMessage(userId, WELCOME_TEXT);
+                botClient.sendMessage(userId, WELCOME_TEXT_DAY);
                 log.info("Sent welcome to user {}", userId);
             }
         } catch (Exception e) {

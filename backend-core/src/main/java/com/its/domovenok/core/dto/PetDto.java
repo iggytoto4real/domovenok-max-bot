@@ -11,4 +11,5 @@ public class PetDto {
     Integer hunger;
     Integer energy;
     Integer happiness;
+    String timeOfDay;
 }

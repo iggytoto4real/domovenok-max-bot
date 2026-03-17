@@ -24,4 +24,25 @@ public class UserAccountEntity {
 
     @Column(nullable = false)
     private int sokrovishcha = 0;
+
+    /**
+     * Строковый идентификатор часового пояса пользователя, например {@code Europe/Moscow}.
+     * Может быть {@code null}, если часовой пояс ещё не определён.
+     */
+    @Column(name = "time_zone")
+    private String timeZone;
+
+    /**
+     * Смещение пользователя от UTC в целых часах.
+     * Например, для UTC+3 значение будет 3, для UTC-2 — -2.
+     * Может быть {@code null}, если смещение ещё не определено.
+     */
+    @Column(name = "offset_hours")
+    private Integer offsetHours;
+
+    public UserAccountEntity(Long id, int denyuzhki, int sokrovishcha) {
+        this.id = id;
+        this.denyuzhki = denyuzhki;
+        this.sokrovishcha = sokrovishcha;
+    }
 }
