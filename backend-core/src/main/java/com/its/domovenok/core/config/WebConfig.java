@@ -19,9 +19,28 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * обрабатывается только в DispatcherServlet).
  * <p>
  * Токен сессии передаётся в {@code Authorization}, cookies не используются — {@code allowCredentials(false)}.
+ * <p>
+ * <b>Private Network Access (Chrome):</b> запрос с публичного HTTPS (например GitHub Pages) на {@code localhost}
+ * требует ответа с {@code Access-Control-Allow-Private-Network: true} на preflight — это
+ * {@link CorsConfiguration#setAllowPrivateNetwork(Boolean)} в Spring Framework 6.1+.
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    /**
+     * С тем же смыслом, что список в {@code application.yml}. Нельзя использовать {@code *} вместе с
+     * {@code allowPrivateNetwork=true}.
+     */
+    private static final List<String> DEFAULT_ALLOWED_ORIGIN_PATTERNS = List.of(
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "http://localhost:4173",
+            "http://127.0.0.1:5173",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:4173",
+            "https://*.github.io",
+            "https://max.ru",
+            "https://*.max.ru");
 
     private final CorsProperties corsProperties;
 
@@ -41,7 +60,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOriginPatterns(patterns)
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD")
                 .allowedHeaders("*")
-                .allowCredentials(config.getAllowCredentials())
+                .allowCredentials(Boolean.TRUE.equals(config.getAllowCredentials()))
+                .allowPrivateNetwork(Boolean.TRUE.equals(config.getAllowPrivateNetwork()))
                 .maxAge(3600);
     }
 
@@ -61,10 +81,12 @@ public class WebConfig implements WebMvcConfigurer {
         // Bearer в заголовке; без cookie — проще для браузера (не требуется credentialed CORS).
         config.setAllowCredentials(false);
         if (origins.isEmpty()) {
-            config.addAllowedOriginPattern("*");
+            config.setAllowedOriginPatterns(DEFAULT_ALLOWED_ORIGIN_PATTERNS);
         } else {
             config.setAllowedOriginPatterns(origins);
         }
+        // HTTPS-страница → http://localhost: Chrome (Private Network Access / loopback)
+        config.setAllowPrivateNetwork(true);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.setMaxAge(3600L);
@@ -82,6 +104,6 @@ public class WebConfig implements WebMvcConfigurer {
         if (fromYaml != null && !fromYaml.isEmpty()) {
             return fromYaml;
         }
-        return List.of();
+        return DEFAULT_ALLOWED_ORIGIN_PATTERNS;
     }
 }

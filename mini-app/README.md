@@ -23,7 +23,7 @@ Web mini-приложение игры Домовёнок, которое отк
 mini-app/
   package.json               # Скрипты dev/build/preview, зависимости React/Redux/Vite
   index.html                 # Точка входа Vite, подключение max-web-app.js, div#root
-  .env.example               # VITE_API_URL
+  .env.example               # опционально VITE_API_URL; в dev без неё — proxy на :8080
 
   src/
     main.tsx                 # Вход приложения, Provider, Browser init
@@ -33,7 +33,7 @@ mini-app/
     bridge/
       maxBridge.ts           # Обёртка над MAX WebApp: initData, ready, режимы
     api/
-      client.ts              # HTTP-клиент (base URL из VITE_API_URL)
+      client.ts              # HTTP-клиент: в dev без VITE_API_URL — /api через Vite proxy
       auth.ts                # POST /api/auth/init
       pets.ts                # GET /api/pet
     services/

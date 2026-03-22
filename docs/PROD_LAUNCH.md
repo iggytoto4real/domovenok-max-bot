@@ -31,8 +31,7 @@
 
 При пуше в `main` (изменения в `mini-app/**` или в workflow) GitHub Actions собирает mini-app и деплоит на GitHub Pages. Включи в репо: **Settings → Pages → Source = GitHub Actions**.
 
-- Сборка сейчас с `VITE_API_URL=http://localhost:8080` — удобно, когда бэкенд поднимаешь локально, а фронт открываешь с `https://<user>.github.io/domovenok-max-bot/`. CORS по умолчанию разрешает `https://*.github.io`.
-- Когда появится боевой бэкенд, поменяй `VITE_API_URL` в [.github/workflows/deploy-mini-app.yml](.github/workflows/deploy-mini-app.yml) и закоммить — следующий деплой уже будет ходить на него.
+- Сборка сейчас с `VITE_API_URL=http://localhost:8080` в workflow — это **неудобно для реальной проверки с GitHub Pages**: браузер с **HTTPS** нестабильно ходит на **localhost** (mixed content, Private Network Access). Для локальной разработки лучше **`npm run dev` без `VITE_API_URL`** (прокси в Vite → см. `docs/LOCAL_MODE.md`). Для проверки «как на проде» укажи **публичный HTTPS URL** API (задеплоенный backend или туннель на `:8080`) и пропиши его в `VITE_API_URL` в [.github/workflows/deploy-mini-app.yml](.github/workflows/deploy-mini-app.yml).
 
 ### Сборка под прод (свой хостинг)
 
