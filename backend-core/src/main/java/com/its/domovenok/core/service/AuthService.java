@@ -44,20 +44,24 @@ public class AuthService {
         if (accountOpt.isEmpty()) {
             // пытаемся создать аккаунт; при гонке по id спокойно читаем уже существующий
             try {
-                UserAccountEntity created = userAccountRepository.save(
-                        new UserAccountEntity(userId, BalanceConstants.INITIAL_DENYUZHKI, BalanceConstants.INITIAL_SOKROVISHCHA));
+                UserAccountEntity created =
+                        new UserAccountEntity(userId, BalanceConstants.INITIAL_DENYUZHKI, BalanceConstants.INITIAL_SOKROVISHCHA);
                 created.setTimeZone(timeZone);
                 created.setOffsetHours(offsetHours);
+                created = userAccountRepository.save(created);
                 denyuzhki = created.getDenyuzhki();
                 sokrovishcha = created.getSokrovishcha();
                 firstVisit = true;
             } catch (DataIntegrityViolationException ex) {
-                // параллельный init успел создать запись с тем же id
+                // параллельный init успел создать запись с тем же id — дозаполняем timezone, если ещё пусто
                 UserAccountEntity account = userAccountRepository.findById(userId)
                         .orElseThrow(() -> ex);
                 denyuzhki = account.getDenyuzhki();
                 sokrovishcha = account.getSokrovishcha();
                 firstVisit = false;
+                if (applyTimeZoneIfAbsent(account, timeZone, offsetHours)) {
+                    userAccountRepository.save(account);
+                }
             }
         } else {
             UserAccountEntity account = accountOpt.get();
@@ -65,16 +69,7 @@ public class AuthService {
             sokrovishcha = account.getSokrovishcha();
             firstVisit = false;
 
-            boolean updated = false;
-            if (account.getTimeZone() == null && timeZone != null && !timeZone.isBlank()) {
-                account.setTimeZone(timeZone);
-                updated = true;
-            }
-            if (account.getOffsetHours() == null && offsetHours != null) {
-                account.setOffsetHours(offsetHours);
-                updated = true;
-            }
-            if (updated) {
+            if (applyTimeZoneIfAbsent(account, timeZone, offsetHours)) {
                 userAccountRepository.save(account);
             }
         }
@@ -84,5 +79,23 @@ public class AuthService {
         sessionStore.put(token, userId);
 
         return Optional.of(new AuthInitResponse(user, token, firstVisit));
+    }
+
+    /**
+     * Заполняет часовой пояс / смещение только если в БД ещё {@code null} (не перетираем при каждом входе).
+     *
+     * @return {@code true}, если сущность изменилась и её нужно сохранить
+     */
+    private static boolean applyTimeZoneIfAbsent(UserAccountEntity account, String timeZone, Integer offsetHours) {
+        boolean updated = false;
+        if (account.getTimeZone() == null && timeZone != null && !timeZone.isBlank()) {
+            account.setTimeZone(timeZone);
+            updated = true;
+        }
+        if (account.getOffsetHours() == null && offsetHours != null) {
+            account.setOffsetHours(offsetHours);
+            updated = true;
+        }
+        return updated;
     }
 }
