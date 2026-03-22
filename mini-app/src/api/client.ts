@@ -14,5 +14,6 @@ export async function apiFetch(path: string, options: RequestInit & { token?: st
   if (token) {
     (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
   }
-  return fetch(url, { ...init, headers, credentials: 'include' });
+  // Без cookies: только Bearer — так проще CORS (не нужен credentialed режим).
+  return fetch(url, { ...init, headers, credentials: 'omit' });
 }

@@ -94,4 +94,4 @@ mvn -pl backend-core spring-boot:run "-Dspring-boot.run.profiles=dev"
 Переменные окружения:
 
 - `MAX_BOT_TOKEN` — токен бота MAX; используется для проверки подписи `initData`.
-- `CORS_ALLOWED_ORIGINS` — список origin-ов (через запятую), с которых мини-приложение может ходить на API.
+- `CORS_ALLOWED_ORIGINS` — необязательно; если задана, **полностью заменяет** список из `application.yml` (origins через запятую). Без неё используются значения по умолчанию: localhost/`127.0.0.1` (порты 5173, 3000, 4173) и паттерн `https://*.github.io` (деплой на GitHub Pages + локальный API).

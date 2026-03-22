@@ -15,7 +15,7 @@
 ### Переменные окружения
 
 - **MAX_BOT_TOKEN** — токен бота (Платформа MAX для партнёров → Чат-боты → Интеграция → Получить токен). Без него валидация `initData` не пройдёт.
-- **CORS_ALLOWED_ORIGINS** — через запятую разрешённые origins или паттерны (по умолчанию: `http://localhost:5173`, `http://localhost:3000`, `https://*.github.io`). Для своего домена укажи явно, например: `https://твой-домен.vercel.app`. Паттерн `https://*.github.io` уже покрывает деплой на GitHub Pages.
+- **CORS_ALLOWED_ORIGINS** — если задана, **полностью заменяет** список из `application.yml`: через запятую origins или паттерны. Если не задана — по умолчанию localhost (в т.ч. `127.0.0.1`, порты 5173/3000/4173) и `https://*.github.io` для GitHub Pages → localhost API. Для своего домена укажи явно, например: `https://твой-домен.vercel.app`.
 
 ### Деплой backend
 
