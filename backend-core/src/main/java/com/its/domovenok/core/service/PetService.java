@@ -3,7 +3,12 @@ package com.its.domovenok.core.service;
 import com.its.domovenok.core.dto.PetDto;
 import com.its.domovenok.core.persistence.PetEntity;
 import com.its.domovenok.core.persistence.PetRepository;
+import com.its.domovenok.core.persistence.UserAccountEntity;
+import com.its.domovenok.core.persistence.UserAccountRepository;
 import com.its.domovenok.domain.model.Pet;
+import com.its.domovenok.domain.model.TimeOfDay;
+import com.its.domovenok.domain.model.TimeOfDayCalculator;
+import com.its.domovenok.domain.model.UserProfile;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +24,7 @@ public class PetService {
 
     private final SessionStore sessionStore;
     private final PetRepository petRepository;
+    private final UserAccountRepository userAccountRepository;
 
     /** Стартовые статы нового питомца (одинаковые для всех типов на первом этапе). */
     private static final int START_HUNGER = 50;
@@ -43,7 +49,7 @@ public class PetService {
         entity.setName(name);
         entity.setLastUpdatedAt(Instant.now());
         entity = petRepository.save(entity);
-        return toDto(entity);
+        return toDtoWithTimeOfDay(userId, entity);
     }
 
     public PetDto getPetByToken(String token) {
@@ -55,7 +61,7 @@ public class PetService {
         if (pets.isEmpty()) {
             return null;
         }
-        return toDto(pets.get(0));
+        return toDtoWithTimeOfDay(userId, pets.get(0));
     }
 
     public PetDto createPet(Long userId, String rawName) {
@@ -77,27 +83,40 @@ public class PetService {
                 START_HAPPINESS,
                 now);
         entity = petRepository.save(entity);
-        return toDto(entity);
+        return toDtoWithTimeOfDay(userId, entity);
     }
 
-    private static PetDto toDto(PetEntity e) {
+    private PetDto toDtoWithTimeOfDay(Long userId, PetEntity e) {
+        TimeOfDay timeOfDay = calculateTimeOfDay(userId);
+        String timeOfDayValue = timeOfDay != null ? timeOfDay.name() : null;
+
         return new PetDto(
                 e.getId(),
                 e.getName(),
                 null,
                 e.getHunger(),
                 e.getEnergy(),
-                e.getHappiness());
+                e.getHappiness(),
+                timeOfDayValue);
     }
 
-    private static Pet toDomain(PetEntity e) {
-        return new Pet(
-                e.getId(),
-                e.getUserId(),
-                e.getName(),
-                e.getHunger(),
-                e.getEnergy(),
-                e.getHappiness(),
-                e.getLastUpdatedAt());
+    private TimeOfDay calculateTimeOfDay(Long userId) {
+        if (userId == null) {
+            return TimeOfDay.DAY;
+        }
+        UserAccountEntity account = userAccountRepository.findById(userId).orElse(null);
+        if (account == null) {
+            return TimeOfDay.DAY;
+        }
+        UserProfile profile = new UserProfile(
+                account.getId(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                account.getTimeZone(),
+                account.getOffsetHours());
+        return TimeOfDayCalculator.calculate(Instant.now(), profile);
     }
 }

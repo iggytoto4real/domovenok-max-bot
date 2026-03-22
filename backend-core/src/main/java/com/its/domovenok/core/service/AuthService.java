@@ -25,7 +25,7 @@ public class AuthService {
     @Value("${max.bot.token:}")
     private String botToken;
 
-    public Optional<AuthInitResponse> init(String initData) {
+    public Optional<AuthInitResponse> init(String initData, String timeZone, Integer offsetHours) {
         Optional<Map<String, Object>> userOpt = initDataValidator.parseAndValidate(initData, botToken);
         if (userOpt.isEmpty()) {
             return Optional.empty();
@@ -46,6 +46,8 @@ public class AuthService {
             try {
                 UserAccountEntity created = userAccountRepository.save(
                         new UserAccountEntity(userId, BalanceConstants.INITIAL_DENYUZHKI, BalanceConstants.INITIAL_SOKROVISHCHA));
+                created.setTimeZone(timeZone);
+                created.setOffsetHours(offsetHours);
                 denyuzhki = created.getDenyuzhki();
                 sokrovishcha = created.getSokrovishcha();
                 firstVisit = true;
@@ -62,6 +64,19 @@ public class AuthService {
             denyuzhki = account.getDenyuzhki();
             sokrovishcha = account.getSokrovishcha();
             firstVisit = false;
+
+            boolean updated = false;
+            if (account.getTimeZone() == null && timeZone != null && !timeZone.isBlank()) {
+                account.setTimeZone(timeZone);
+                updated = true;
+            }
+            if (account.getOffsetHours() == null && offsetHours != null) {
+                account.setOffsetHours(offsetHours);
+                updated = true;
+            }
+            if (updated) {
+                userAccountRepository.save(account);
+            }
         }
 
         UserDto user = UserDto.of(userMap, denyuzhki, sokrovishcha);
