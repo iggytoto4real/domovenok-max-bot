@@ -26,11 +26,15 @@ backend-core/
     service/
       AuthService.java          # Логика аутентификации по initData, создание/чтение UserAccountEntity
       PetService.java           # Логика работы с единственным питомцем пользователя
+      PetDegradationService.java # Почасовая/суточная деградация статов питомцев (cron)
+      DailyIncomeService.java   # Ежедневные 500 денюжек в локальное «утро» (8:00), cron каждый час
       SessionStore.java         # Простейшее in-memory хранилище сессий
     config/
+      BalanceConstants.java     # Стартовые балансы, цены, ежедневный доход (500 денюжек)
       WebConfig.java            # CORS (паттерны: localhost, https://*.github.io по умолчанию)
     util/
       InitDataValidator.java    # Валидация initData из MAX по токену бота
+      UserZoneId.java           # Часовой пояс пользователя из БД (IANA / offset / сервер)
 
   src/main/resources/
     application.yml             # Порт 8080, datasource PostgreSQL, MAX_BOT_TOKEN, CORS

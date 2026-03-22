@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,12 @@ public class UserAccountEntity {
      */
     @Column(name = "offset_hours")
     private Integer offsetHours;
+
+    /**
+     * Локальная календарная дата пользователя, за которую уже начислен ежедневный доход (в его часовом поясе).
+     */
+    @Column(name = "last_daily_income_local_date")
+    private LocalDate lastDailyIncomeLocalDate;
 
     public UserAccountEntity(Long id, int denyuzhki, int sokrovishcha) {
         this.id = id;

@@ -9,5 +9,14 @@ public final class BalanceConstants {
     /** Цена покупки нового питомца в денюжках. */
     public static final int PET_PRICE_DENYUZHKI = 300;
 
+    /** Ежедневное начисление денюжек (один раз за локальный календарный день). */
+    public static final int DAILY_INCOME_DENYUZHKI = 500;
+
+    /**
+     * Локальный час, в который срабатывает начисление (включительно весь этот час: 8:00–8:59).
+     * Совпадает с началом «дня» в {@link com.its.domovenok.domain.model.TimeOfDayCalculator}.
+     */
+    public static final int DAILY_INCOME_LOCAL_HOUR = 8;
+
     private BalanceConstants() {}
 }
